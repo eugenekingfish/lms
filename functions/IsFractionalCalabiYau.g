@@ -1,6 +1,8 @@
 LoadPackage("qpa");
 
 q := Quiver(3, [[1, 2, "a"], [2, 3, "b"]]);
+qq := Quiver(4, [[1, 2, "a"], [2, 3, "b"], [3, 4, "c"]]);
+qq_pa := PathAlgebra(Rationals, qq);
 q_pa := PathAlgebra(Rationals, q);
 
 kron := KroneckerAlgebra(Rationals, 2);
