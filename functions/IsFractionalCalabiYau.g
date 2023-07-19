@@ -24,11 +24,9 @@ IsFractionalCalabiYau := function(kQ, max_syzygy)
       # Determining the trivial extension algebra of the path algebra kQ.
       triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
       # Determing the enveloping algebra of the trivial extension algebra.
-      # env_alg := EnvelopingAlgebra(triv_ext_alg);
       M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
 
       # Testing the module for Omega-periodicity
-      # NB: Potential optimisation here if IsNthSyzygy is used (?)
       if IsOmegaPeriodic(M, max_syzygy) = false then
         return false;
       else
