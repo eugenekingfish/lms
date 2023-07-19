@@ -22,6 +22,10 @@ CreateQuiver := function(n)
   return Q;
 end;
 
+
+
+
+
 # TODO: error checking -- test whether kQ is a pathalgebra and if the underlying quiver is dynkin a
 LengthTwoRelations := function(kQ)
   local n, arrows, gens, i, j, r1, r2, length_two_relations;
@@ -56,6 +60,9 @@ LengthTwoRelations := function(kQ)
 end;
 
 
+
+
+
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
 # Parameters:  
 #              kQ         -- PathAlgebra
@@ -63,23 +70,30 @@ end;
 
 IsFractionalCalabiYau := function(kQ, max_syzygy)
   local triv_ext_alg, M; 
-   if max_syzygy <= 0 then
+  if max_syzygy <= 0 then
      Error("max_syzygy must be greater than 0.");
-   fi;
-   # We raise an error if kQ is not of type PathAlgebra
-   if IsPathAlgebra(kQ) = false then
-       Error("kQ must be a PathAlgebra.");
-   else
-      # Determining the trivial extension algebra of the path algebra kQ.
-      triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
-      # Determing the enveloping algebra of the trivial extension algebra.
-      M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
+  fi;
+  # Determining the trivial extension algebra of the path algebra kQ.
+  triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
+  # Determing the enveloping algebra of the trivial extension algebra.
+  M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
 
-      # Testing the module for Omega-periodicity
-      if IsOmegaPeriodic(M, max_syzygy) = false then
+  # Testing the module for Omega-periodicity
+  if IsOmegaPeriodic(M, max_syzygy) = false then
         return false;
       else
         return true;
-      fi;
-   fi;
+  fi;
+end;
+
+
+
+
+
+CreateQuotientAlgebra := function(kQ, relations)
+  local gb, I;
+  gb := GBNPGroebnerBasis(relations, kQ);
+  I := Ideal(kQ, gb);
+  GroebnerBasis(I, gb);
+  return kQ / I;
 end;
