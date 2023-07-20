@@ -22,14 +22,9 @@ CreateQuiver := function(n)
   return Q;
 end;
 
-LengthTwoRelations := function(kQ, K)
-  local n, arrows, gens, i, j, k, paths, rel, relations;
+LengthTwoRelations := function(kQ)
+  local n, arrows, gens, relations, i, j, l;
   n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
-
-  # n must be greater than 3 for there to be at least one pair of length 2 relations
-  if n <= 3 then
-    return [];
-  fi;
 
   arrows := [];
 
@@ -42,31 +37,17 @@ LengthTwoRelations := function(kQ, K)
   od;
   ##
 
-  relations := [];
+  relations := [ [] ];
 
-  # Generating all length 2 paths
-  paths := [];
-  for i in [1..n-2] do
-    Add(paths, arrows[i] * arrows[i+1]);
-  od;
-
-  Print("All length 2 paths:", paths, "\n");
-
-  for i in [1..Length(paths)-K+1] do
-    rel := [];
-    for k in [0..K-2] do
-      Add(rel, paths[i+k]);
-    od;
-    for j in [0..K-1] do
-      Add(relations, Concatenation(rel, [paths[Length(paths)-j]]));
+  for i in [1..n-2] do 
+    j := 1;
+    l := Length(relations);
+    for j in [1..l] do
+      Add(relations, Concatenation(relations[j], [arrows[i] * arrows[i+1]]));
+      j := j + 1;
     od;
   od;
-
   return relations;
-end;
-
-NumberOfLengthTwoRelations := function(n, k)
-  return 0.5*(n-k)*(n-(k+1));
 end;
 
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
@@ -75,7 +56,7 @@ end;
 #              max_syzygy -- Integer that is greater than 0 used in Omega-periodicity check.
 
 IsFractionalCalabiYau := function(kQ, max_syzygy)
-  local triv_ext_alg, M; 
+  local triv_ext_alg, M, check;
   if max_syzygy <= 0 then
      Error("max_syzygy must be greater than 0.");
   fi;
@@ -85,10 +66,11 @@ IsFractionalCalabiYau := function(kQ, max_syzygy)
   M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
 
   # Testing the module for Omega-periodicity
-  if IsOmegaPeriodic(M, max_syzygy) = false then
+  check := IsOmegaPeriodic(M, max_syzygy);
+  if check = false then
         return false;
       else
-        return true;
+        return check;
   fi;
 end;
 
@@ -99,6 +81,3 @@ CreateQuotientAlgebra := function(kQ, relations)
   GroebnerBasis(I, gb);
   return kQ / I;
 end;
-
-Q := CreateQuiver(5);
-kQ := PathAlgebra(Rationals, Q);
