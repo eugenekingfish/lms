@@ -22,13 +22,8 @@ CreateQuiver := function(n)
   return Q;
 end;
 
-
-
-
-
-# TODO: error checking -- test whether kQ is a pathalgebra and if the underlying quiver is dynkin a
-LengthTwoRelations := function(kQ)
-  local n, arrows, gens, i, j, r1, r2, length_two_relations;
+LengthTwoRelations := function(kQ, K)
+  local n, arrows, gens, i, j, k, paths, rel, relations;
   n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
 
   # n must be greater than 3 for there to be at least one pair of length 2 relations
@@ -47,21 +42,32 @@ LengthTwoRelations := function(kQ)
   od;
   ##
 
-  length_two_relations := [];
+  relations := [];
 
+  # Generating all length 2 paths
+  paths := [];
   for i in [1..n-2] do
-    r1 := arrows[i] * arrows[i+1];
-    for j in [i+1..n-2] do
-      r2 := arrows[j] * arrows[j+1];
-      Add(length_two_relations, [r1, r2]);
+    Add(paths, arrows[i] * arrows[i+1]);
+  od;
+
+  Print("All length 2 paths:", paths, "\n");
+
+  for i in [1..Length(paths)-K+1] do
+    rel := [];
+    for k in [0..K-2] do
+      Add(rel, paths[i+k]);
+    od;
+    for j in [0..K-1] do
+      Add(relations, Concatenation(rel, [paths[Length(paths)-j]]));
     od;
   od;
-  return length_two_relations;
+
+  return relations;
 end;
 
-
-
-
+NumberOfLengthTwoRelations := function(n, k)
+  return 0.5*(n-k)*(n-(k+1));
+end;
 
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
 # Parameters:  
@@ -86,10 +92,6 @@ IsFractionalCalabiYau := function(kQ, max_syzygy)
   fi;
 end;
 
-
-
-
-
 CreateQuotientAlgebra := function(kQ, relations)
   local gb, I;
   gb := GBNPGroebnerBasis(relations, kQ);
@@ -97,3 +99,6 @@ CreateQuotientAlgebra := function(kQ, relations)
   GroebnerBasis(I, gb);
   return kQ / I;
 end;
+
+Q := CreateQuiver(5);
+kQ := PathAlgebra(Rationals, Q);
