@@ -22,19 +22,9 @@ CreateQuiver := function(n)
   return Q;
 end;
 
-
-
-
-
-# TODO: error checking -- test whether kQ is a pathalgebra and if the underlying quiver is dynkin a
 LengthTwoRelations := function(kQ)
-  local n, arrows, gens, i, j, r1, r2, length_two_relations;
+  local n, arrows, gens, relations, i, j, l;
   n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
-
-  # n must be greater than 3 for there to be at least one pair of length 2 relations
-  if n <= 3 then
-    return [];
-  fi;
 
   arrows := [];
 
@@ -47,21 +37,18 @@ LengthTwoRelations := function(kQ)
   od;
   ##
 
-  length_two_relations := [];
+  relations := [ [] ];
 
-  for i in [1..n-2] do
-    r1 := arrows[i] * arrows[i+1];
-    for j in [i+1..n-2] do
-      r2 := arrows[j] * arrows[j+1];
-      Add(length_two_relations, [r1, r2]);
+  for i in [1..n-2] do 
+    j := 1;
+    l := Length(relations);
+    for j in [1..l] do
+      Add(relations, Concatenation(relations[j], [arrows[i] * arrows[i+1]]));
+      j := j + 1;
     od;
   od;
-  return length_two_relations;
+  return relations;
 end;
-
-
-
-
 
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
 # Parameters:  
@@ -69,7 +56,7 @@ end;
 #              max_syzygy -- Integer that is greater than 0 used in Omega-periodicity check.
 
 IsFractionalCalabiYau := function(kQ, max_syzygy)
-  local triv_ext_alg, M; 
+  local triv_ext_alg, M, check;
   if max_syzygy <= 0 then
      Error("max_syzygy must be greater than 0.");
   fi;
@@ -79,16 +66,13 @@ IsFractionalCalabiYau := function(kQ, max_syzygy)
   M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
 
   # Testing the module for Omega-periodicity
-  if IsOmegaPeriodic(M, max_syzygy) = false then
+  check := IsOmegaPeriodic(M, max_syzygy);
+  if check = false then
         return false;
       else
-        return true;
+        return check;
   fi;
 end;
-
-
-
-
 
 CreateQuotientAlgebra := function(kQ, relations)
   local gb, I;
