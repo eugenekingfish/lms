@@ -1,19 +1,42 @@
 Read("Functions.g");
+Read("FCY.g");
 
-fn := "outputs/output6.txt";
-n := 6;
-AppendTo(fn, "n = ", n, "\n\n");
+# This function creates a length n quiver of the form 1 -> 2 -> ... -> n-1 -> n
+# and creates a PathAlgebra (kQ) from it over the rationals. 
+# Then, it generates all length k relations, and tests whether kQ / I is FCY.
 
-Q := CreateQuiver(n);
-kQ := PathAlgebra(Rationals, Q);
-rels := LengthTwoRelations(kQ);
+CheckAll := function(n, K, write_output) 
+  local fn, Q, kQ, rels, i, quot, result;
+  if write_output = true then 
+    fn := Concatenation("outputs/output_nodes=", String(n), "; K=", String(K), ".txt");
+    AppendTo(fn, "n = ", n, "\n\n");
+  fi;
 
-for i in [2..Length(rels)] do
-   AppendTo(fn, rels[i], " --- ");
-  Print("Checking: ", rels[i], "\n");
-  quot := CreateQuotientAlgebra(kQ, rels[i]);
-  result := IsFractionalCalabiYau(quot, 20);
-  AppendTo(fn, result, "\n");
-od;
-Print("FINISHED.\n");
-quit;
+  Q := CreateQuiver(n);
+  kQ := PathAlgebra(Rationals, Q);
+  rels := LengthKRelations(kQ, K);
+  Print("Calculated ", String(Length(rels)), " length ", String(K), " relations.\n");
+  Print("Proceeding to check if FCY...\n\n");
+
+  for i in [2..Length(rels)] do
+
+    if write_output then 
+      AppendTo(fn, rels[i], " --- ");
+    fi;
+
+    Print("Checking: ", rels[i], "\n");
+    quot := CreateQuotientAlgebra(kQ, rels[i]);
+    result := IsFractionalCalabiYau(quot, 20);
+    Print("Completed FCY check. Result --- ", result, "\n");
+
+    if write_output = true then 
+      AppendTo(fn, result, "\n");
+    fi;
+
+  od;
+
+  Print("\nCheck complete.\n");
+  if write_output = true then
+    Print("Written output to: ", fn, "\n");
+  fi;
+end;
