@@ -8,8 +8,8 @@ Read("FCY.g");
 CheckAll := function(n, K, write_output) 
   local fn, Q, kQ, rels, i, quot, result;
   if write_output = true then 
-    fn := Concatenation("outputs/output_nodes=", String(n), "; K=", String(K), ".txt");
-    AppendTo(fn, "n = ", n, "\n\n");
+    fn := Concatenation("outputs/output_n", String(n), "_k", String(K), ".txt");
+    AppendTo(fn, "n = ", n, "; k = ", k, "\n\n");
   fi;
 
   Q := CreateQuiver(n);
