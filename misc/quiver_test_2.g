@@ -1,4 +1,5 @@
 LoadPackage("qpa");
+Read("../Functions.g");
 
 # Creating the quiver
 Q := Quiver(4, [[1, 2, "a"], [2, 4, "b"], [1, 3, "c"], [3, 4, "d"]]); 
@@ -12,3 +13,5 @@ relations := [pa.a * pa.b - pa.c * pa.d];
 quot := pa / relations;
 
 AssignGeneratorVariables(quot);
+
+IsFractionalCalabiYau(pa, 20);
