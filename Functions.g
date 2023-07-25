@@ -104,3 +104,14 @@ CreateQuotientAlgebra := function(kQ, relations)
   GroebnerBasis(I, gb);
   return kQ / I;
 end;
+
+TrivA := function(n) 
+  local Q, kQ, t1, t2, triv_ext;
+  t1 := Runtime();
+  Q := CreateQuiver(n);
+  kQ := PathAlgebra(Rationals, Q);
+  triv_ext := TrivialExtensionOfQuiverAlgebra(kQ);
+  t2 := Runtime();
+  Print("Time taken: ", StringTime(t2-t1), "\n");
+  return triv_ext;
+  end;
