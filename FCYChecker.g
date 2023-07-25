@@ -9,7 +9,7 @@ CheckAll := function(n, K, write_output)
   local fn, Q, kQ, rels, i, quot, result;
   if write_output = true then 
     fn := Concatenation("outputs/output_n", String(n), "_k", String(K), ".txt");
-    AppendTo(fn, "n = ", n, "; k = ", k, "\n\n");
+    AppendTo(fn, "n = ", n, "; k = ", K, "\n\n");
   fi;
 
   Q := CreateQuiver(n);
@@ -26,7 +26,7 @@ CheckAll := function(n, K, write_output)
 
     Print("Checking: ", rels[i], "\n");
     quot := CreateQuotientAlgebra(kQ, rels[i]);
-    result := IsFractionalCalabiYau(quot, 20);
+    result := IsFractionalCalabiYauAlt(quot, 50);
     Print("Completed FCY check. Result --- ", result, "\n");
 
     if write_output = true then 
