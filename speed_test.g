@@ -6,7 +6,8 @@ Read("FCY.g");
 # Then, it generates all length k relations, and tests whether kQ / I is FCY.
 
 CheckAll := function(n, K, variant)
-  local fn, Q, kQ, rels, i, quot, result;
+  local fn, Q, kQ, rels, i, quot, result, t1, t2;
+  t1 := Runtime();
 
   Q := CreateQuiver(n);
   kQ := PathAlgebra(Rationals, Q);
@@ -19,11 +20,11 @@ CheckAll := function(n, K, variant)
     Print("Checking: ", rels[i], "\n");
     quot := CreateQuotientAlgebra(kQ, rels[i]);
     if variant = "" then
-      result := IsFractionalCalabiYau(quot, 20);
+      result := IsFractionalCalabiYau(quot, 2*n);
     fi;
 
     if variant = "alt" then
-      result := IsFractionalCalabiYauAlt(quot, 20);
+      result := IsFractionalCalabiYauAlt(quot, 2*n);
     fi;
 
     Print("Completed FCY check. Result --- ", result, "\n");
@@ -31,4 +32,6 @@ CheckAll := function(n, K, variant)
   od;
 
   Print("\nCheck complete.\n");
+  t2 := Runtime();
+  Print("Time taken: ", StringTime(t2-t1));
 end;
