@@ -1,3 +1,4 @@
+LoadPackage("qpa");
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
 # Parameters:  
 #              kQ         -- PathAlgebra
@@ -51,4 +52,40 @@ IsFractionalCalabiYauAlt := function(kQ, max_syzygy)
       fi;
    od;
    return "Exceeded maximum syzygy.";
+end;
+
+
+IsFractionalCalabiYauV3 := function(kQ, max_syzygy)
+  local triv_ext_alg, sm, ds, check, N0, N1, i, j, syzygies, iso_check;
+
+  if max_syzygy <= 0 then
+     Error("max_syzygy must be greater than 0.");
+  fi;
+
+  # Determining the trivial extension algebra of the path algebra kQ.
+  triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
+
+  sm := SimpleModules(triv_ext_alg);
+  syzygies := ShallowCopy(sm);
+
+  for i in [1..max_syzygy] do
+  iso_check := true; 
+    for j in [1..Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)))] do
+      syzygies[j] := 1stSyzygy(syzygies[j]);
+      
+      # We require syzygies[j] \simeq sm[j] \forall 1 \leq j \leq n.
+      # Hence, if we find a single non-isomorphic pair, we don't need to bother checking whether
+      # the remaining ones are also isomorphic.
+      # This is what the iso_check variable is for -- as soon as a single non-isomorphic pair is found,
+      # it prevents the remaining syzygies to be checked for isomorphic; hence saving time.
+      if iso_check = true and not(IsomorphicModules(syzygies[j], sm[j])) then
+        iso_check := false;
+      fi;
+    od;
+
+    if iso_check = true then
+      return i;
+    fi;
+  od;
+  return "Maximum syzygy exceeded!";
 end;
