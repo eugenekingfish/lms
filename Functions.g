@@ -22,6 +22,10 @@ CreateQuiver := function(n)
   return Q;
 end;
 
+CreatePathAlgebra := function(n)
+  return PathAlgebra(Rationals, CreateQuiver(n));
+end;
+
 LengthTwoRelations := function(kQ)
   local n, arrows, gens, relations, i, j, l;
   n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
