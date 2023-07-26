@@ -19,12 +19,16 @@ CheckAll := function(n, K, variant)
 
     Print("Checking: ", rels[i], "\n");
     quot := CreateQuotientAlgebra(kQ, rels[i]);
-    if variant = "" then
-      result := IsFractionalCalabiYau(quot, 2*n);
+    if variant = 1 then
+      result := IsFractionalCalabiYau(quot, 4*n);
     fi;
 
-    if variant = "alt" then
-      result := IsFractionalCalabiYauAlt(quot, 2*n);
+    if variant = 2 then
+      result := IsFractionalCalabiYauAlt(quot, 4*n);
+    fi;
+
+    if variant = 3 then
+      result := IsFractionalCalabiYauV3(quot, 50);
     fi;
 
     Print("Completed FCY check. Result --- ", result, "\n");
