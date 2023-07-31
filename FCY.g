@@ -1,4 +1,5 @@
 LoadPackage("qpa");
+
 # Description: This function tests whether the path algebra kQ is fractional Calabi-Yau
 # Parameters:  
 #              kQ         -- PathAlgebra
@@ -63,13 +64,16 @@ IsFractionalCalabiYauV3 := function(kQ, max_syzygy)
   fi;
 
   # Determining the trivial extension algebra of the path algebra kQ.
+  Print("Computing trivial extension...\n");
   triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
 
+  Print("Computing simple modules...\n");
   sm := SimpleModules(triv_ext_alg);
   syzygies := ShallowCopy(sm);
 
   for i in [1..max_syzygy] do
   iso_check := true; 
+  Print("Current syzygy: ", i, "\n");
     for j in [1..Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)))] do
       syzygies[j] := 1stSyzygy(syzygies[j]);
       
@@ -78,6 +82,7 @@ IsFractionalCalabiYauV3 := function(kQ, max_syzygy)
       # the remaining ones are also isomorphic.
       # This is what the iso_check variable is for -- as soon as a single non-isomorphic pair is found,
       # it prevents the remaining syzygies to be checked for isomorphic; hence saving time.
+
       if iso_check = true and not(IsomorphicModules(syzygies[j], sm[j])) then
         iso_check := false;
       fi;
