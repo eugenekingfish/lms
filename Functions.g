@@ -13,7 +13,7 @@ CreateQuiver := function(n)
   arrows := [];
 
   for i in [1..n-1] do
-    Add(arrows, [vertices[i], vertices[i+1], Concatenation("a_",String(i))]);
+    Add(arrows, [vertices[i], vertices[i+1], Concatenation("a",String(i))]);
   od;
 
   Q := Quiver(vertices, arrows);
@@ -118,4 +118,35 @@ TrivA := function(n)
   t2 := Runtime();
   Print("Time taken: ", StringTime(t2-t1), "\n");
   return triv_ext;
-  end;
+end;
+
+MaximalPaths := function(Q)
+  local paths, verts, i, j, k, l, targets, out_arrow, out_arrows;
+
+  verts := VerticesOfQuiver(Q);
+  paths := [];
+
+  for i in [1..Length(verts)] do
+    targets := [];
+    Append(paths, [[]]);
+    out_arrows := OutgoingArrowsOfVertex(verts[i]);
+    Append(paths[i], out_arrows); # Adding the outgoing arrows to the paths
+
+    while not(out_arrows = []) do
+       # Obtaining a list of targets for the outgoing arrows
+       for j in [1..Length(out_arrows)] do
+          Append(targets, [TargetOfPath(out_arrows[j])]);
+       od;
+       out_arrows := [];
+       for k in [1..Length(targets)] do
+          Append(out_arrows, [OutgoingArrowsOfVertex(targets[k])]);
+       od;
+       Print(targets, "\n");
+    od;
+  od;
+  return paths;
+end;
+
+Q := CreateQuiver(5);
+m := MaximalPaths(Q);
+Print(m, "\n");
