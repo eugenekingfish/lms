@@ -13,7 +13,7 @@ IsFractionalCalabiYau := function(kQ, max_syzygy)
   # Determining the trivial extension algebra of the path algebra kQ.
   triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
 
-  # Determing the enveloping algebra of the trivial extension algebra.
+  # Determining the enveloping algebra of the trivial extension algebra.
   M := AlgebraAsModuleOverEnvelopingAlgebra(triv_ext_alg);
 
   # Testing the module for Omega-periodicity
@@ -46,7 +46,7 @@ IsFractionalCalabiYauAlt := function(kQ, max_syzygy)
    for i in [1..max_syzygy] do
       Print("Computing syzygy: ", i, "\n");
       N1 := 1stSyzygy(N0);
-      if IsomorphicModules(ds ,N1) then
+      if IsomorphicModules(ds, N1) then
          return i;
       else
          N0 := N1;
@@ -77,7 +77,7 @@ IsFractionalCalabiYauV3 := function(kQ, max_syzygy)
     for j in [1..Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)))] do
       syzygies[j] := 1stSyzygy(syzygies[j]);
       
-      # We require syzygies[j] \simeq sm[j] \forall 1 \leq j \leq n.
+      # We require syzygies[j] \cong sm[j] \forall 1 \leq j \leq n.
       # Hence, if we find a single non-isomorphic pair, we don't need to bother checking whether
       # the remaining ones are also isomorphic.
       # This is what the iso_check variable is for -- as soon as a single non-isomorphic pair is found,

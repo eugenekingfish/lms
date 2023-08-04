@@ -56,8 +56,8 @@ end;
 
 LengthKRelations := function(kQ, K)
   local n, arrows, gens, relations, i, j, k, l, current;
-  n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
 
+  n := Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)));
   arrows := [];
 
   # Obtaining the generators of the quiver algebra
@@ -120,33 +120,26 @@ TrivA := function(n)
   return triv_ext;
 end;
 
-MaximalPaths := function(Q)
-  local paths, verts, i, j, k, l, targets, out_arrow, out_arrows;
+MaximalPaths := function(kQ)
+  local Q, i, l, j, out, rels, pa_rels, _kQ;
 
-  verts := VerticesOfQuiver(Q);
-  paths := [];
+  Q := QuiverOfPathAlgebra(kQ);
+  l := Length(VerticesOfQuiver(Q));
+  _kQ := PathAlgebra(Rationals, CreateQuiver(l)); # Duplicate of kQ without relations
+  out := [];
+  pa_rels := RelationsOfAlgebra(kQ); # Getting relations used in ideal for kQ
 
-  for i in [1..Length(verts)] do
-    targets := [];
-    Append(paths, [[]]);
-    out_arrows := OutgoingArrowsOfVertex(verts[i]);
-    Append(paths[i], out_arrows); # Adding the outgoing arrows to the paths
-
-    while not(out_arrows = []) do
-       # Obtaining a list of targets for the outgoing arrows
-       for j in [1..Length(out_arrows)] do
-          Append(targets, [TargetOfPath(out_arrows[j])]);
-       od;
-       out_arrows := [];
-       for k in [1..Length(targets)] do
-          Append(out_arrows, [OutgoingArrowsOfVertex(targets[k])]);
-       od;
-       Print(targets, "\n");
+  for i in [1..l-2] do
+    rels := LengthKRelations(_kQ, l-i);
+    for j in [1..Length(rels)] do
+      Print(rels[j], " : ", String(rels[j]), " : ", pa_rels, " : ", "\n");
+       if not(IsZero(rels[j])) then
+         Append(out, rels[j]);
+       fi;
     od;
-  od;
-  return paths;
-end;
 
-Q := CreateQuiver(5);
-m := MaximalPaths(Q);
-Print(m, "\n");
+    if not(out = []) then
+      return out;
+    fi;
+  od;
+end;
