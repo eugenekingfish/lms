@@ -7,14 +7,14 @@
 \usepackage{hhline}
 
 \usepackage{geometry}
- \geometry{
- a4paper,
- total={170mm,257mm},
- left=30mm,
- right=30mm,
- top=30mm,
- bottom=30mm
- }
+\geometry{
+   a4paper,
+   total={170mm,257mm},
+   left=30mm,
+   right=30mm,
+   top=30mm,
+   bottom=30mm
+}
 
 \input{boxes.tex}
 \renewcommand{\L}{\mathcal{L}}
@@ -81,7 +81,8 @@
       \end{enumerate}
    \end{coolbox}
 
-   \begin{multicols*}{2}
+   \newpage
+
    \begin{center}
       $n=3$
       \begin{longtable}{|c|c|c|c|}
@@ -162,7 +163,6 @@
          $(a_1a_2a_3a_4a_5)$ && 9 & 9 \\
          \hline
       \end{longtable}
-      \columnbreak
 
       $n = 7$
       \begin{longtable}{|c|c|c|c|}
@@ -214,7 +214,6 @@
          \hline
       \end{longtable}
    \end{center}
-\end{multicols*}
    \textbf{Conjecture 1:} If the ideal $I$ fails for $n$, it fails for all $N > n$. \\
    \textbf{Conjecture 2:} Ideals corresponding to length two relations never fail for any $n$. \\
    \textbf{Conjecture 3:} The dimension of ideals corresponding to length two relations is always $2n$.
