@@ -28,7 +28,7 @@ CheckAll := function(n, K, variant)
     fi;
 
     if variant = 3 then
-      result := IsFractionalCalabiYauV3(quot, 50);
+      result := IsFractionalCalabiYauV3(quot, 30);
     fi;
 
     Print("Completed FCY check. Result --- ", result, "\n");

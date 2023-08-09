@@ -9,7 +9,7 @@ CreateQuiver := function(n)
     Error("The quiver must have at least one vertex.\n");
   fi;
 
-  vertices := List([1..n], i -> String(i));
+  vertices := List([1..n], i -> Concatenation("v", String(i)));
   arrows := [];
 
   for i in [1..n-1] do

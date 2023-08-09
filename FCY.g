@@ -64,19 +64,19 @@ IsFractionalCalabiYauV3 := function(kQ, max_syzygy)
   fi;
 
   # Determining the trivial extension algebra of the path algebra kQ.
-  Print("Computing trivial extension...\n");
+  #Print("Computing trivial extension...\n");
   triv_ext_alg := TrivialExtensionOfQuiverAlgebra(kQ);
 
-  Print("Computing simple modules...\n");
+  #Print("Computing simple modules...\n");
   sm := SimpleModules(triv_ext_alg);
   syzygies := ShallowCopy(sm);
 
   for i in [1..max_syzygy] do
-  iso_check := true; 
-  Print("Current syzygy: ", i, "\n");
+    iso_check := true; 
+    #Print("Current syzygy: ", i, "\n");
     for j in [1..Length(VerticesOfQuiver(QuiverOfPathAlgebra(kQ)))] do
       syzygies[j] := 1stSyzygy(syzygies[j]);
-      
+
       # We require syzygies[j] \cong sm[j] \forall 1 \leq j \leq n.
       # Hence, if we find a single non-isomorphic pair, we don't need to bother checking whether
       # the remaining ones are also isomorphic.
