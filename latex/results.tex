@@ -5,6 +5,7 @@
 \usepackage{tcolorbox}
 \usepackage{enumitem}
 \usepackage{hhline}
+\usepackage{algpseudocode, algorithm}
 
 \usepackage{geometry}
 \geometry{
@@ -99,7 +100,6 @@
          \hline
       \end{longtable}
 
-      \begin{minipage}{0.3\textwidth}
       $n=4$
 
       \begin{longtable}{|c|c|c|c|}
@@ -107,18 +107,16 @@
          $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
          \hline 
          $()$ & 8 && 8 \\
-         \hline
+         \hhline{|=|=|=|=|}
          $(a_1a_2)$ & 8 & & 8\\
          $(a_2a_3)$ & 8 && 8\\
          $(a_1a_2, a_2a_3)$ & 8 && 8\\
-         \hline
+         \hhline{|=|=|=|=|}
          $(a_1a_2a_3)$ & 10 && 5\\
          \hline
       \end{longtable}
-      \end{minipage}
-      \hspace{2cm}
-      \begin{minipage}{0.3\textwidth}
-         $n=4$ (mixed relations)
+
+      $n=4$ (mixed relations)
 
       \begin{longtable}{|c|c|c|c|}
          \hline 
@@ -129,7 +127,6 @@
          $(a_1a_2, a_2a_3, a_1a_2a_3)$ & 8 & & 8\\
          \hline
       \end{longtable}
-      \end{minipage}
 
       $n=5$
       \begin{longtable}{|c|c|c|c|}
@@ -137,29 +134,68 @@
          $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
          \hline
          $()$ & 10 && 10 \\
-         \hline
+         \hhline{|=|=|=|=|}
          $(a_1a_2)$ & 10 && 10\\
          $(a_2a_3)$ & 10 && 10 \\
          $(a_3a_4)$ & 10 && 10\\
          $(a_1a_2, a_2a_3)$ & 10 && 10 \\
          $(a_1a_2, a_3a_4)$ & 10 && 10 \\
          $(a_1a_2, a_2a_3, a_3a_4)$ & 10 && 10 \\
-         \hline
+         \hhline{|=|=|=|=|}
          $(a_1a_2a_3)$ & 14 && 14\\
          $(a_2a_3a_4)$ & 14 && 14\\
          $(a_1a_2a_3, a_2a_3a_4)$ & 14 && 14\\
-         \hline
+         \hhline{|=|=|=|=|}
          $(a_1a_2a_3a_4)$ & 14 && 14\\
          \hline
       \end{longtable}
 
-      $n = 6$
+      $n=5$ (mixed relations)
+      \begin{longtable}{|c|c|c|c|}
+         \hline
+         $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
+         \hline
+         $(a_1a_2,a_1a_2a_3)$ &&& 10 \\
+         $(a_1a_2,a_2a_3a_4)$ &&& 14 \\
+         $(a_1a_2,a_1a_2a_3,a_2a_3a_4)$ &&& 14 \\
+         %%%
+         $(a_2a_3,a_1a_2a_3)$ &&& 10 \\
+         $(a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         $(a_2a_3,a_1a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         %%%
+         $(a_1a_2,a_2a_3,a_1a_2a_3)$ &&& 10 \\
+         $(a_1a_2,a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         $(a_1a_2,a_2a_3,a_1a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         %%%
+         $(a_3a_4,a_1a_2a_3)$ &&& 14 \\
+         $(a_3a_4,a_2a_3a_4)$ &&& 10 \\
+         $(a_3a_4,a_1a_2a_3,a_2a_3a_4)$ &&& 14 \\
+         %%%
+         $(a_1a_2,a_3a_4,a_1a_2a_3)$ &&& 10 \\
+         $(a_1a_2,a_3a_4,a_2a_3a_4)$ &&& 10 \\
+         $(a_1a_2,a_3a_4,a_1a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         %%%
+         $(a_2a_3,a_3a_4,a_1a_2a_3)$ &&& 10 \\
+         $(a_1a_2,a_3a_4,a_2a_3a_4)$ &&& 10 \\
+         $(a_1a_2,a_3a_4,a_1a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         %%%
+         $(a_1a_2,a_2a_3,a_3a_4,a_1a_2a_3)$ &&& 10 \\
+         $(a_1a_2,a_2a_3,a_3a_4,a_2a_3a_4)$ &&& 10 \\
+         $(a_1a_2,a_2a_3,a_3a_4,a_1a_2a_3,a_2a_3a_4)$ &&& 10 \\
+         \hline
+         $\ell_{2,3}$ &&& 10 \\
+         \hline
+         $\ell_{3,4}$ &&& 14 \\
+         \hline
+      \end{longtable}
+
+      $n=6$
       \begin{longtable}{|c|c|c|c|}
          \hline
          $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
          \hline 
          $()$ & && 12 \\
-         \hline
+         \hhline{|=|=|=|=|} 
          $(a_1a_2)$ & 12 && 12 \\
          $(a_2a_3)$ & 12 && 12 \\
          $(a_3a_4)$ & 12 && 12 \\
@@ -175,24 +211,49 @@
          $(a_1a_2, a_3a_4, a_4a_5)$ & 12 && 12 \\
          $(a_2a_3, a_3a_4, a_4a_5)$ & 12 && 12 \\
          $(a_1a_2, a_2a_3, a_3a_4, a_4a_5)$ & 12 && 12 \\
-         \hline
+         \hhline{|=|=|=|=|} 
          $(a_1a_2a_3)$ && 9 & 9 \\
          $(a_2a_3a_4)$ && 11 & 22\\
          $(a_3a_4a_5)$ && 9 & 9\\
          $(a_1a_2a_3, a_2a_3a_4)$ && 9 & 9 \\
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $(a_1a_2a_3, a_3a_4a_5)$ && $>30$ & $>50$ \\
          $(a_2a_3a_4, a_3a_4a_5)$ && 9 & 9\\
          $(a_1a_2a_3, a_2a_3a_4, a_3a_4a_5)$ && 22 & 22 \\
-         \hline
+         \hhline{|=|=|=|=|} 
          $(a_1a_2a_3a_4)$ && 22 & 22\\
          $(a_2a_3a_4a_5)$ && 22 & 22\\
          $(a_1a_2a_3a_4, a_2a_3a_4a_5)$ && 22 & 22\\
+         \hhline{|=|=|=|=|} 
          $(a_1a_2a_3a_4a_5)$ && 9 & 9 \\
          \hline
       \end{longtable}
+      
+      \newpage
 
-      $n = 7$
+      $n=6$ (mixed relations)
+      \begin{longtable}{|c|c|c|c|}
+         \hline
+         $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
+         \hline 
+         $\ell_{2,3}$ &&& 9, 12, 22 \\
+         $\ell_{2,4}$ &&& 12, 22 \\
+         $\ell_{2,5}$ &&& 12 \\
+         $\ell_{3,4}$ \textbf{not} containing $(a_1a_2a_3,a_3a_4a_5)$ &&& 9, 22 \\
+         \hline
+         \rowcolor{red!50!white}
+         $\ell_{3,4}$ containing $(a_1a_2a_3,a_3a_4a_5)$ &&& $>30$ \\
+         \hline
+         $\ell_{3,5} \setminus \{\xi\}$ &&& 9, 22 \\
+         \hline
+         \rowcolor{red!50!white}
+         $\xi = (a_1a_2a_3,a_3a_4a_5, a_1\ldots a_5)$ &&& $>30$ \\
+         \hline
+         $\ell_{4,5}$ &&& 22 \\
+         \hline
+      \end{longtable}
+
+      $n=7$
       \begin{longtable}{|c|c|c|c|}
          \hline
          $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
@@ -203,15 +264,15 @@
          $(a_2a_3a_4)$ &&& 17 \\
          $(a_3a_4a_5)$ &&& 17 \\
          $(a_1a_2a_3, a_2a_3a_4)$ &&& 22 \\
-         \rowcolor{red!30!white}
-         $(a_1a_2a_3,a_3a_4a_5)$ &&& $>24$
+         \rowcolor{red!50!white}
+         $(a_1a_2a_3,a_3a_4a_5)$ &&& $>24$ \\
          \hline
          $(a_1a_2a_3a_4)$ &&& 17 \\
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $(a_2a_3a_4a_5)$ &&& $>50$ \\
          $(a_3a_4a_5a_6)$ &&& 17 \\
          $(a_1a_2a_3a_4, a_2a_3a_4a_5)$ &&& 17 \\
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $(a_1a_2a_3a_4, a_3a_4a_5a_6)$ &&& $>50$ \\
          $(a_2a_3a_4a_5, a_3a_4a_5a_6)$ &&& 17 \\
          $(a_1a_2a_3a_4, a_2a_3a_4a_5, a_3a_4a_5a_6)$ &&& 17 \\
@@ -221,6 +282,23 @@
          $\ell_6$ &&& 17 \\
          \hline
       \end{longtable}
+
+      $n=7$ (mixed relations)
+
+      \begin{longtable}{|c|c|c|c|}
+         \hline
+         $I$ & \texttt{v1} & \texttt{v2} & \texttt{v3} \\
+         \hline
+         $\ell_{4,5}$ excluding problematic ideals &&& 17 \\
+         \rowcolor{red!50!white}
+         $\ell_{4,5}$ with problematic ideals &&& $>30$ \\
+         $\ell_{4,6}$ excluding problematic ideals &&& 17 \\
+         \rowcolor{red!50!white}
+         $\ell_{4,6}$ with problematic ideals &&& $>30$ \\
+         $\ell_{5,6}$ &&& 17 \\
+         \hline
+      \end{longtable}
+
       $n=8$
       \begin{longtable}{|c|c|c|c|}
          \hline
@@ -230,7 +308,7 @@
          $\lambda = (a_1a_2, a_2a_3, a_3a_4, a_4a_5, a_5a_6, a_6a_7)$ && 8 & 16 \\
          $(a_1a_2a_3)$ &&& 13 \\
          $(a_2a_3a_4)$ &&& 29 \\
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $(a_3a_4a_5)$ &&& $>50$ \\
          $(a_4a_5a_6)$ &&&  ?\\
          $(a_5a_6a_7)$ &&&  ?\\
@@ -244,9 +322,9 @@
          \hline
          $\ell_2$ &&& 18 \\
          \hline
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $(a_1 \ldots a_6)$ &&& $>39$ \\
-         \rowcolor{red!30!white}
+         \rowcolor{red!50!white}
          $\ell_7$ &&& $>50$ \\
          \hline
          $\ell_8$ &&& 30 \\
@@ -255,8 +333,27 @@
       
    \end{center}
    \section{A few questions}
-   \textbf{Conjecture 1:} If the ideal $I$ fails for $n$, it fails for all $N > n$. \\
-   \textbf{Conjecture 2:} Ideals corresponding to length two relations never fail for any $n$. \\
-   \textbf{Conjecture 3:} The dimension of ideals corresponding to length two relations is always $2n$.
+   \textbf{Conjecture 1:} Given an ideal $I$, if $kQ_n/I$ is not FCY, then $kQ_N/I$ is not FCY for all $N > n$. \\
+   \textbf{Conjecture 2:} If $I \in \ell_2$, then $kQ_n / I$ is FCY for any valid $n$. \\
+   \textbf{Conjecture 3:} The dimension of ideals corresponding to length two relations is always $2n$. \\
+   \textbf{Conjecture 4:} Given some ideal $I \in \ell_k$, if $kQ/I$ is not FCY, then $kQ/J$ is not FCY, 
+   where $J$ is any mixed relation ideal containing $I$.
 \end{flushleft}
+
+\begin{algorithm}
+   \begin{algorithmic}[1]
+      \caption{Determining the projectives and injectives.}
+      \Require $R = [(s_1, t_1), (s_2, t_2), \ldots, (s_m, t_m)]$ \Comment{A list of $m$ relations on $Q_n$}.
+      \State $P, I \gets \big[[1, \ldots, n],\; [2, \ldots, n],\; \ldots, [n]\big]$ \Comment{These lists store the projectives and injectives.}
+      \For{$r \in R$}
+      \For{$r[1] \leq v \leq n$} 
+      \State Delete every element $1 \leq e \leq r[0]$ from $P[v]$. \Comment{Projectives.}
+      \EndFor
+
+      \For{$1 \leq v \leq r[0]$} 
+      \State Delete every element $r[1] \leq e \leq n$ from $I[v]$. \Comment{Injectives.}
+      \EndFor
+      \EndFor
+   \end{algorithmic}
+\end{algorithm}
 \end{document}
