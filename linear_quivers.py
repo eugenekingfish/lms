@@ -1,5 +1,4 @@
 from collections import deque
-from time import time
 
 class linear_quiver:
     # vertices  -- positive integer representing the number of vertices in the quiver 
@@ -7,7 +6,7 @@ class linear_quiver:
     def __init__(self, vertices, relations):
         self.vertices = vertices
         self.relations = relations
-        self.jectives = []
+        self.calculate_jectives()
 
     def calculate_jectives(self):
         n = self.vertices
@@ -28,20 +27,14 @@ class linear_quiver:
 
     # This function should return a linear module
     def get_nth_projective(self, n):
-        if self.jectives == []:
-            raise(ValueError("calculate_jectives must be called before using this function."))
-        else:
-            return self.jectives[n-1][0]
+        return self.jectives[n-1][0]
 
     # This function should return a linear module too
     def get_nth_injective(self, n):
-        if self.jectives == []:
-            raise(ValueError("ERROR: calculate_jectives must be called before using this function."))
-        else:
-            return self.jectives[n-1][1]
+        return self.jectives[n-1][1]
 
 
-    # This function doesn't work as intended
+    # This function partially works
     def display_jectives(self, pad = 2):
         s = ""
         print(self.jectives)
@@ -56,6 +49,27 @@ class linear_quiver:
                     counter += 1
             s += "\n"
         print(s)
+
+    def projective_resolution(self):
+        output = []
+        for i in range(self.vertices):
+            res = []
+            resolved = False
+            inj = self.jectives[i][1] # ith injective
+            rev_inj = [inj[1], inj[0]] # reversed ith injective
+
+            while not resolved:
+                res.append(rev_inj[0])
+                proj = self.jectives[rev_inj[0]-1][0] # projective corresponding to ith injective
+                ker = linear_module.kernel(rev_inj, proj)
+
+                if ker == [0,0]:
+                    resolved = True
+
+                rev_inj = ker
+
+            output.append(res)
+        return output
 
 
 # We represent the zero module as head = 0, socle = 0.
@@ -75,29 +89,18 @@ class linear_module:
     # displays the module vertically
     def display(self):
         return 0
+    
+    # kernel of two modules
+    @staticmethod
+    def kernel(mod_a, mod_b):
+        a,b = mod_a
+        c,d = mod_b
+        if a == c and b == d:
+            return [0,0]
+        return [max(b,d) - 1, min(b,d)]
 
-
-# Outputs a module -- kernel of the projective cover
-# There should be an error if the map from the projective is not surjective
-def syzygy(quiver, module):
-    return 0
-
-# Output -- list of integers representing the vertices of the projective modules in the projective resolution going backwards
-def projective_resolution(quiver, module):
-    return 0
+def matrix_of_proj_res(proj_res):
 
 def len_two(n):
     x = [[i,i+2] for i in range(1,n-1)]
     return x
-
-#rels = len_two(1000)
-lq = linear_quiver(7,[(4,6),(2,5)])
-#rels = len_two(320)
-#lq = linear_quiver(1000, rels)
-start = time()
-lq.calculate_jectives()
-end = time()
-print("Calculated jectives in:", end - start)
-lq.display_jectives()
-
-
