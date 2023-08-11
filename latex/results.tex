@@ -358,9 +358,14 @@
       \EndFor
    \end{algorithmic}
 \end{algorithm}
-Let $R = \{(a_1,b_1), (a_2,b_2), \ldots, (a_{m-1}, b_{m-1}), (a_m, b_m)\}$ be a set of $m$ relations on the quiver $Q$, 
-where $a_i \leq b_i$ for every $1 \leq i \leq m$. Then, we define the following function for the $n$\textsuperscript{th} projective:
+
+\subsection*{Kernel of Modules}
+Given two modules $M_1 = (\alpha,\beta_1)$ and $M_2 = (\alpha,\beta_2)$, we have that 
 \[
-   N_p\big((p_1, q_1), (a_i, b_i)\big)
+   \ker(M_1,M_2) = 
+   \begin{cases}
+      (0,0), & \text{if } \beta_1 = \beta_2; \\
+      \big(\max(\beta_1,\beta_2) - 1, \; \min(\beta_1, \beta_2)\big), & \text{otherwise.}
+   \end{cases}
 \]
 \end{document}
