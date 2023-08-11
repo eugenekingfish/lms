@@ -15,18 +15,11 @@ class linear_quiver:
         jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
 
         for r in self.relations:
-            
-            # Projectives -- P = (p, q)
-            # For each relation r = (a,b), we transform the kth projective from (1,k) --> a+1, for every b <= k <= n. 
             a, b = r
             for v in range(b, n+1):
-                # jectives[v-1][0][1] is simply the q from P = (p, q)
-                jectives[v-1][0][1] = max(a + 1, jectives[v-1][0][1])
-
-            # Injectives:
-            # For each relation r = (a,b), we transform the kth injective from (k,n) --> (k, b-1), for every 1 <= k <= n. 
+                jectives[v-1][0][1] = max(a + 1, jectives[v-1][0][1]) 
             for v in range(a, 0, -1):
-                jectives[v-1][1][1] = max(b - 1, jectives[v-1][1][1])
+                jectives[v-1][1][1] = min(b - 1, jectives[v-1][1][1])
 
         self.jectives = jectives
 
@@ -48,8 +41,22 @@ class linear_quiver:
             return self.jectives[n-1][1]
 
 
-    def display_jectives(self):
-        return 0
+    # This function doesn't work as intended
+    def display_jectives(self, pad = 2):
+        s = ""
+        print(self.jectives)
+        for i in range(self.vertices):
+            counter = 1
+            for j in range(self.vertices):
+                if j < i:
+                    s += " " +  (" " * pad)
+                if j >= i:
+                    if self.jectives[j][0][1] <= counter:
+                        s += str(counter) + (" " * pad)
+                    counter += 1
+            s += "\n"
+        print(s)
+
 
 # We represent the zero module as head = 0, socle = 0.
 class linear_module:
@@ -79,13 +86,18 @@ def syzygy(quiver, module):
 def projective_resolution(quiver, module):
     return 0
 
-lq = linear_quiver(7,[(4,6),(2,4),(1,3),(5,7)])
+def len_two(n):
+    x = [[i,i+2] for i in range(1,n-1)]
+    return x
+
+#rels = len_two(1000)
+lq = linear_quiver(7,[(4,6),(2,5)])
+#rels = len_two(320)
+#lq = linear_quiver(1000, rels)
 start = time()
 lq.calculate_jectives()
 end = time()
 print("Calculated jectives in:", end - start)
-jectives = lq.get_jectives()
-for j in jectives:
-    print(j[0])
+lq.display_jectives()
 
 
