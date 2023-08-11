@@ -21,6 +21,7 @@
 \renewcommand{\L}{\mathcal{L}}
 
 \begin{document}
+\iffalse
 \begin{flushleft}
    \begin{center}
       \begin{tikzpicture}
@@ -339,6 +340,7 @@
    \textbf{Conjecture 4:} Given some ideal $I \in \ell_k$, if $kQ/I$ is not FCY, then $kQ/J$ is not FCY, 
    where $J$ is any mixed relation ideal containing $I$.
 \end{flushleft}
+\fi
 
 \begin{algorithm}
    \begin{algorithmic}[1]
@@ -356,4 +358,9 @@
       \EndFor
    \end{algorithmic}
 \end{algorithm}
+Let $R = \{(a_1,b_1), (a_2,b_2), \ldots, (a_{m-1}, b_{m-1}), (a_m, b_m)\}$ be a set of $m$ relations on the quiver $Q$, 
+where $a_i \leq b_i$ for every $1 \leq i \leq m$. Then, we define the following function for the $n$\textsuperscript{th} projective:
+\[
+   N_p\big((p_1, q_1), (a_i, b_i)\big)
+\]
 \end{document}
