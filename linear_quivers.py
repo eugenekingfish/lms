@@ -1,4 +1,5 @@
 from collections import deque
+import numpy as np
 
 class linear_quiver:
     # vertices  -- positive integer representing the number of vertices in the quiver 
@@ -95,12 +96,34 @@ class linear_module:
     def kernel(mod_a, mod_b):
         a,b = mod_a
         c,d = mod_b
-        if a == c and b == d:
+        if b == d:
             return [0,0]
         return [max(b,d) - 1, min(b,d)]
 
 def matrix_of_proj_res(proj_res):
+    n = len(proj_res)
+    mat = np.zeros((n,n), dtype=int)
+    for i in range(n):
+        mult = 1
+        for elem in proj_res[i]:
+            mat[i][elem - 1] = 1 * mult
+            mult *= -1
+    return mat.T
 
 def len_two(n):
     x = [[i,i+2] for i in range(1,n-1)]
     return x
+
+def is_fcy(mat, max_pwr):
+    idty = np.eye(len(mat), dtype = int)
+    res = mat
+    pwr = 1
+
+    while pwr < max_pwr:
+        res = res @ mat
+        pwr += 1
+
+        if np.array_equal(res, idty) or np.array_equal(res, -1 * idty):
+            return (True, pwr)
+    
+    return (False, max_pwr)
