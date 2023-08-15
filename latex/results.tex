@@ -5,7 +5,7 @@
 \usepackage{tcolorbox}
 \usepackage{enumitem}
 \usepackage{hhline}
-\usepackage{algpseudocode, algorithm}
+%\usepackage{algpseudocode, algorithm}
 
 \usepackage{geometry}
 \geometry{
@@ -332,14 +332,29 @@
       \end{longtable}
       
    \end{center}
-   \section{A few questions}
-   \textbf{Conjecture 1:} Given an ideal $I$, if $kQ_n/I$ is not FCY, then $kQ_N/I$ is not FCY for all $N > n$. \\
-   \textbf{Conjecture 2:} If $I \in \ell_2$, then $kQ_n / I$ is FCY for any valid $n$. \\
-   \textbf{Conjecture 3:} The dimension of ideals corresponding to length two relations is always $2n$. \\
-   \textbf{Conjecture 4:} Given some ideal $I \in \ell_k$, if $kQ/I$ is not FCY, then $kQ/J$ is not FCY, 
-   where $J$ is any mixed relation ideal containing $I$.
+   \section{A few conjectures}
+   \subsection*{Conjecture 1}
+   Given an ideal $I$, if $kQ_n/I$ is not FCY, then $kQ_N/I$ is not FCY for all $N > n$. \\[\baselineskip]
+
+   The first (potential) f-relation is $\left[[1,4], [3,5]\right]$ for $n=6$. Testing for finite order up to power $m = 500$, this
+   relation is an f-relation for $6 \leq n \leq 199$.
+
+   \subsection*{Conjecture 2}
+   If $I \in \ell_2$, then $kQ_n / I$ is FCY for any valid $n$. \\[\baselineskip]
+   \textbf{Comments:} This has been tested for $3 \leq n \leq 19$ -- a total of $262,125$ algebras -- and is true in each case.
+   Additionally, the order of the obtained matrix is $n+1$ for each $n$ in this range.
+
+   \subsection*{Question 1}
+   There are a total of $2^n$ relations on $Q_n$. If $R$ is the set of all relations on $Q_n$, we call $r \in R$ a fail-relation ($f-$relation)
+   if $kQ_n/I$ is not FCY (where $I = (r)$). Similarly, we can call $r$ a pass-relation ($p-$relation) if $kQ_n/I$ is FCY. \\[\baselineskip]
+
+   If $\mathcal{F}_n$ is the set of all $f-$relations on $Q_n$, what is 
+   \[
+      \max_{n \geq 3} \left(\dfrac{2^n}{\mathcal{F}_n}\right)
+   \]
 \end{flushleft}
 
+\iffalse
 \begin{algorithm}
    \begin{algorithmic}[1]
       \caption{Determining the projectives and injectives.}
@@ -356,6 +371,7 @@
       \EndFor
    \end{algorithmic}
 \end{algorithm}
+\fi
 
 \subsection*{Kernel of Modules}
 Given two modules $M_1 = (\alpha,\beta_1)$ and $M_2 = (\alpha,\beta_2)$, we have that 
