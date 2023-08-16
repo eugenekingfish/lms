@@ -1,4 +1,5 @@
 from collections import deque
+import tensorflow as tf
 import numpy as np
 
 class linear_quiver:
@@ -110,10 +111,8 @@ def matrix_of_proj_res(proj_res):
             mult *= -1
     return mat.T
 
-def len_two(n):
-    x = [[i,i+2] for i in range(1,n-1)]
-    return x
-
+# Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
+# checking whether the matrix has finite order (up to power <max_pwr>)
 def is_fcy(mat, max_pwr):
     idty = np.eye(len(mat), dtype = int)
     res = mat
@@ -127,3 +126,30 @@ def is_fcy(mat, max_pwr):
             return (True, pwr)
     
     return (False, max_pwr)
+
+# Performs the same operation as is_fcy, but utilises Tensorflow for GPU matmul optimisation
+def is_fcy_tf(mat, max_pwr):
+    idty = np.eye(len(mat), dtype = int)
+    res = mat
+    pwr = 1
+
+    while pwr < max_pwr:
+        tensor_res = tf.convert_to_tensor(res)
+        tensor_mat = tf.convert_to_tensor(mat)
+        res = tf.matmul(res, mat)
+        pwr += 1
+
+        if np.array_equal(res.numpy(), idty) or np.array_equal(res.numpy(), -1 * idty):
+            return (True, pwr)
+    
+    return (False, max_pwr)
+
+def is_fcy_l2_tf(mat, pwr):
+    idty = np.eye(len(mat), dtype = int)
+    tensor_mat = tf.convert_to_tensor(mat)
+    power = tf.linalg.matrix_power(tensor_mat, pwr)
+
+    if np.array_equal(power.numpy(), idty) or np.array_equal(power.numpy(), -1 * idty):
+        return (True, pwr)
+    
+    return (False, pwr)
