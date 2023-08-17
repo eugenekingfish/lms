@@ -5,9 +5,10 @@ from linear_quivers import *
 from relations import *
 
 df = pd.DataFrame()
-for n in range(25):
+l = 3
+for n in range(20):
     start = time()
-    rels = length_k_relations(n,9)
+    rels = length_k_relations(n,l)
 
     for rel in rels:
         lq = linear_quiver(n, rel)
@@ -22,7 +23,7 @@ for n in range(25):
 print("Compute time taken:", end-start)
 
 print(df)
-df.to_csv("l9_relations.csv")
+df.to_csv("l" + str(l) + "_relations.csv")
 
 
 
