@@ -6,13 +6,12 @@ from relations import *
 
 def generate_pass_table(max_pwr, max_n):
     data = np.full((max_n, max_n), np.NaN, dtype=float)
-    for n in range(4, max_n + 1):
+    for n in range(3, max_n + 1):
 
         start = time()
-        #for l in range(2, n):
-        for l in range(3, 4):
+        for l in range(2, n):
             rels = length_k_relations(n,l)
-            passes = 0
+            passes = 1 # initialise for 1 for the empty relation ()
 
             for rel in rels:
                 lq = linear_quiver(n, rel) 
@@ -23,6 +22,8 @@ def generate_pass_table(max_pwr, max_n):
                 if result[0] == True:
                     passes += 1
             data[n-1][l-1] = passes / len(rels)
+            #data[n-1][l-1] = [passes, len(rels)]
+
 
         end = time()
         print(n, end-start)
@@ -33,6 +34,6 @@ def generate_pass_table(max_pwr, max_n):
     print("Total Compute time taken:", end-start)
 
     print(df)
-    df.to_csv("csv/TABLE_TEST3.csv")
+    df.to_csv("csv/TABLE_TEST_BIG.csv")
 
 generate_pass_table(500, 25)
