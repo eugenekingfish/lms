@@ -11,7 +11,7 @@ def generate_pass_table(max_pwr, max_n):
         start = time()
         for l in range(2, n):
             rels = length_k_relations(n,l)
-            passes = 1 # initialise for 1 for the empty relation ()
+            passes = 0 # initialise for 1 for the empty relation ()
 
             for rel in rels:
                 lq = linear_quiver(n, rel) 
