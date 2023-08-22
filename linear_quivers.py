@@ -56,8 +56,73 @@ class linear_quiver:
             output.append(res)
         return output
 
+    def projective_resolution_serre(self):
+        output = [] # this stores the projective resolution
+
+        for i in range(self.vertices): # we iterate over the vertices
+            res = [] 
+            resolved = False 
+            inj = self.jectives[i][1] # ith injective
+            rev_inj = [inj[1], inj[0]] # reversed ith injective
+
+            while not resolved:
+                res.append([rev_inj[0]]) 
+                proj = self.jectives[rev_inj[0]-1][0] # projective corresponding to ith injective
+                ker = linear_module.kernel(rev_inj, proj)
+
+                if ker == [0,0]:
+                    resolved = True
+
+                rev_inj = ker
+
+            if len(res) == 1:
+                output.append(res[0])
+            else:
+                output.append(res)
+        return output
+
+    def serre_resolution(self):
+        pr = self.projective_resolution_serre()
+        values = [[i+1] for i in range(self.vertices)]
+        counter = 0
+        value = values[0]
+        while counter < 6:
+            print("value ->", value)
+            if len(value) == 1:
+                value = pr[value[0] - 1].copy()
+            else:
+                for i in range(len(value)):
+                    value[i] = pr[value[i][0] - 1].copy()
+            counter += 1
+
+def simplify(lst):
+    new_lst = []
+    # This removes all interior lists, so [[1], [2]] --> [1,2]
+    for i in range(len(lst)):
+        if len(lst[i]) == 1:
+            new_lst.append(lst[i])
+        else:
+            sub_lst = []
+            for j in range(len(lst[i])):
+                sub_lst.append(lst[i][j][0])
+            new_lst.append(sub_lst)
+
+
+    # Adding zeroes to the relevant sub-lists
+    longest_lst = len(max(new_lst))
+
+    for i in range(len(new_lst)):
+        new_lst[i].extend([0] * (longest_lst - len(new_lst[i])))
+
+    print(new_lst)
+    mat = np.matrix(new_lst, dtype=int).T
+    print(mat)
+    
+    
+
     def serre_functor_resolution2(self):
         pr = self.projective_resolution() 
+        print("PROJ RES:", pr)
         serre_dict = {} # this stores the (A : B), where A --$--> B
 
         # initialising  <serre_dict>  with projective resolution  <pr>
@@ -72,28 +137,29 @@ class linear_quiver:
         counter = 0
 
         while counter < 6:
+            print("val ->", val)
             try:
                 # we try to apply the Serre functor to  <val>  by seeing whether $(val) 
                 # is stored within  <serre_dict>
                 if type(val) == type([]) and (type(val[0]) == type([])):
                     val = simplify_lst(val)
+                    print("simplified ->", val)
                 val = serre_dict[str(val)]
 
             except KeyError:
+                print("keyerror ->", val)
                 # if $(val) isn't within  <serre_dict>  , then we must calculate it manually
                 new_arr = []
                 for elem in val:
                     new_arr.append(serre_dict[str(elem)])
                 serre_dict[str(val)] = new_arr
                 val = new_arr
-                print(val)
 
             counter += 1
 
 
 def simplify_lst(lst):
     idx = 0
-    print("lst", lst)
     while len(lst) != 1:
         current = lst[0][idx]
         if current == lst[1] or current in lst[1]:
@@ -107,6 +173,20 @@ def simplify_lst(lst):
             lst.pop(1)
         idx += 1
     return lst[0]
+
+def simplify2(L):
+    temp = [len(L[i]) + i for i in range(len(L))]
+    length = max(temp)
+    N = []
+    for i in range(length):
+        P = []
+        for j in range(i+1):
+            if len(L) > j and L[j] != [] and L[j][0] != [0]:
+                P.append(L[j][0])
+                L[j].pop(0)
+        N.append(P)
+    return N
+    
 
 # We represent the zero module as head = 0, socle = 0.
 class linear_module:
