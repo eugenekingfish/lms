@@ -1,5 +1,6 @@
 from collections import deque
 import numpy as np
+from collections import deque
 
 class linear_quiver:
     # vertices  -- positive integer representing the number of vertices in the quiver 
@@ -55,6 +56,58 @@ class linear_quiver:
             output.append(res)
         return output
 
+    def serre_functor_resolution2(self):
+        pr = self.projective_resolution() 
+        serre_dict = {} # this stores the (A : B), where A --$--> B
+
+        # initialising  <serre_dict>  with projective resolution  <pr>
+        serre_dict['0'] = 0
+        for i in range(len(pr)):
+            if len(pr[i]) == 1:
+                serre_dict[str(i+1)] = pr[i][0]
+            else:
+                serre_dict[str(i+1)] = pr[i]
+
+        val = 1
+        counter = 0
+
+        while counter < 6:
+            try:
+                # we try to apply the Serre functor to  <val>  by seeing whether $(val) 
+                # is stored within  <serre_dict>
+                if type(val) == type([]) and (type(val[0]) == type([])):
+                    val = simplify_lst(val)
+                val = serre_dict[str(val)]
+
+            except KeyError:
+                # if $(val) isn't within  <serre_dict>  , then we must calculate it manually
+                new_arr = []
+                for elem in val:
+                    new_arr.append(serre_dict[str(elem)])
+                serre_dict[str(val)] = new_arr
+                val = new_arr
+                print(val)
+
+            counter += 1
+
+
+def simplify_lst(lst):
+    idx = 0
+    print("lst", lst)
+    while len(lst) != 1:
+        current = lst[0][idx]
+        if current == lst[1] or current in lst[1]:
+            lst[0][idx] = 0
+            if type(lst[1]) == type([]):
+                lst[1].remove(current)
+            else:
+                lst.pop(1)
+        if len(lst[1]) == 1:
+            lst[0].extend(lst[1])
+            lst.pop(1)
+        idx += 1
+    return lst[0]
+
 # We represent the zero module as head = 0, socle = 0.
 class linear_module:
     def __init__(self, head, socle):
@@ -92,6 +145,7 @@ def matrix_of_proj_res(proj_res):
             mat[i][elem - 1] = 1 * mult
             mult *= -1
     return mat.T
+
 
 # Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
 # checking whether the matrix has finite order (up to power <max_pwr>)
