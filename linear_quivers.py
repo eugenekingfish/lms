@@ -57,58 +57,139 @@ class linear_quiver:
             output.append(res)
         return output
 
-    def projective_resolution_serre(self):
-        output = [] # this stores the projective resolution
+    def serre_functor(self, module, proj_res):
+        # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
+        # every single time. This is probably bad for larger quivers.
+        pr = self.take_projective_resolution(module, proj_res)
+        saus = calculate_sausages(pr)
+        canc_saus = cancellation(saus)
+        #remove_lists(canc_saus)
+        remove_lists_and_zeroes(canc_saus)
+        return canc_saus
 
-        for i in range(self.vertices): # we iterate over the vertices
-            res = [] 
-            resolved = False 
-            inj = self.jectives[i][1] # ith injective
-            rev_inj = [inj[1], inj[0]] # reversed ith injective
-
-            while not resolved:
-                res.append([rev_inj[0]]) 
-                proj = self.jectives[rev_inj[0]-1][0] # projective corresponding to ith injective
-                ker = linear_module.kernel(rev_inj, proj)
-
-                if ker == [0,0]:
-                    resolved = True
-
-                rev_inj = ker
-
-            output.append(res)
-        return output
-
-
-    def take_projective_resolution(self, lst):
+    def take_projective_resolution(self, lst, proj_res):
         pr = [[]]
-        pr.extend(self.projective_resolution())
-        for i in range(len(lst)):
-            lst[i] = pr[lst[i]]
-        return lst
+        pr.extend(proj_res) 
+        lst_cpy = copy.deepcopy(lst)
+        for i in range(len(lst_cpy)):
+            lst_cpy[i] = pr[lst_cpy[i]]
+        return lst_cpy
 
-    def serre_resolution(self):
-        pr = self.projective_resolution()
-        print("proj res ->", pr)
-        values = [[i+1] for i in range(self.vertices)]
-        print("values ->", values)
-        counter = 0
-        value = values[0]
-        while counter < 6:
-            print("value ->", value)
-            value = simplify(value)
-            print("simplified ->", value)
-            if len(value) == 1:
-                value = pr[value[0][0] - 1]
-            else:
-                for i in range(len(value)):
-                    value[i] = pr[value[i][0] - 1]
-                print(value)
-            counter += 1
 
+    """
+        Faster, less-readable version of serre_resolution
+    """
+    def serre_resolution_fast(self, max_iter, prnt = False):
+        states = [[i+1] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
+        proj_res = self.projective_resolution()
+        for iteration in range(max_iter):
+            if prnt:
+                print(iteration, "-->", states)
+
+            terminate = True
+
+            for i in range(self.vertices):
+                states[i] = self.serre_functor(states[i], proj_res) # <--- SLOW
+                L = states[i]
+                non_zero = np.count_nonzero(L)
+                
+                # If L doesn't contain 1 non-zero element, and its last element isn't i + 1, then 
+                # we know that we shouldn't terminate applying the Serre functor.
+                if not(L[-1] == i + 1 and non_zero == 1):
+                    terminate = False
+
+            # If terminate is still true after exiting the for loop loop, then we must have reached the final
+            # stage of the Serre functor process. Hence, we can stop and return the dimension.
+            if terminate:
+                if prnt:
+                    print("FINAL -->", states)
+                return (iteration + 1, self.vertices - non_zero)
+
+        return "max_iter reached: " + str(max_iter)
+
+    def serre_resolution(self, max_iter, prnt = False):
+        init_states = [[i+1] for i in range(self.vertices)]
+        for k in range(max_iter):
+            if prnt:
+                print(k, "-->", init_states)
+
+            terminate = True
+            for i in range(self.vertices):
+                init_states[i] = self.serre_functor(init_states[i])
+                L = init_states[i]
+                non_zero = np.count_nonzero(L)
+                if not(L[-1] == i + 1 and non_zero == 1):
+                    terminate = False
+
+            if terminate:
+                return (k+1, self.vertices - non_zero)
+
+        return "max_iter reached: " + str(max_iter)
+
+def check_zeroes(L):
+    if L != [] and np.count_nonzero(L) == 1 and L[-1] != 0:
+        return True
+    return False
+
+"""
+    Assumptions:
+        -- L is a list of sub-lists.
+        -- The sub-lists do not contain any lists
+"""
 def cancellation(L):
-    pass
+    # Handling degenerate cases
+    l = len(L)
+    if l == 0 or l == 1:
+        return L
 
+    """
+    Is a deep copy required here? If L is the sausages array, is it necessary to keep it?
+    Modification might not affect the algorithm at all.
+    """
+    L_cpy = copy.deepcopy(L) 
+
+    # Non-degenereate case
+    for i in range(len(L_cpy) - 1): 
+        j = 0
+        while j < len(L_cpy[i]):
+            if L_cpy[i][j] in L_cpy[i+1]:
+                L_cpy[i+1].remove(L_cpy[i][j])
+                L_cpy[i].pop(0)
+            else:
+                j += 1
+    return L_cpy
+
+"""
+    Assumptions:
+        -- L is a list containing sub-lists.
+        -- The sub-lists all have length 1
+"""
+
+def remove_lists_and_zeroes(L):
+    idx = len(L) - 1
+    non_zero_found = False
+
+    while idx >= 0:
+        if L[idx] == []:
+            if non_zero_found:
+                L[idx] = 0
+            else:
+                L.pop()
+        else:
+            non_zero_found = True
+            L[idx] = L[idx][0]
+        idx -= 1
+    return L
+
+
+def remove_lists(L):
+    l = len(L)
+    for i in range(l):
+        if L[i] == []:
+            L[i] = 0
+        else:
+            L[i] = L[i][0]
+    return L
 
 def calculate_sausages(L):
     L_copy = copy.deepcopy(L)
