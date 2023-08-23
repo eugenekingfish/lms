@@ -1,6 +1,7 @@
 from collections import deque
 import numpy as np
 from collections import deque
+import copy
 
 class linear_quiver:
     # vertices  -- positive integer representing the number of vertices in the quiver 
@@ -75,115 +76,51 @@ class linear_quiver:
 
                 rev_inj = ker
 
-            if len(res) == 1:
-                output.append(res[0])
-            else:
-                output.append(res)
+            output.append(res)
         return output
 
+
+    def take_projective_resolution(self, lst):
+        pr = [[]]
+        pr.extend(self.projective_resolution())
+        for i in range(len(lst)):
+            lst[i] = pr[lst[i]]
+        return lst
+
     def serre_resolution(self):
-        pr = self.projective_resolution_serre()
+        pr = self.projective_resolution()
+        print("proj res ->", pr)
         values = [[i+1] for i in range(self.vertices)]
+        print("values ->", values)
         counter = 0
         value = values[0]
         while counter < 6:
             print("value ->", value)
+            value = simplify(value)
+            print("simplified ->", value)
             if len(value) == 1:
-                value = pr[value[0] - 1].copy()
+                value = pr[value[0][0] - 1]
             else:
                 for i in range(len(value)):
-                    value[i] = pr[value[i][0] - 1].copy()
+                    value[i] = pr[value[i][0] - 1]
+                print(value)
             counter += 1
 
-def simplify(lst):
-    new_lst = []
-    # This removes all interior lists, so [[1], [2]] --> [1,2]
-    for i in range(len(lst)):
-        if len(lst[i]) == 1:
-            new_lst.append(lst[i])
-        else:
-            sub_lst = []
-            for j in range(len(lst[i])):
-                sub_lst.append(lst[i][j][0])
-            new_lst.append(sub_lst)
+def cancellation(L):
+    pass
 
 
-    # Adding zeroes to the relevant sub-lists
-    longest_lst = len(max(new_lst))
-
-    for i in range(len(new_lst)):
-        new_lst[i].extend([0] * (longest_lst - len(new_lst[i])))
-
-    print(new_lst)
-    mat = np.matrix(new_lst, dtype=int).T
-    print(mat)
-    
-    
-
-    def serre_functor_resolution2(self):
-        pr = self.projective_resolution() 
-        print("PROJ RES:", pr)
-        serre_dict = {} # this stores the (A : B), where A --$--> B
-
-        # initialising  <serre_dict>  with projective resolution  <pr>
-        serre_dict['0'] = 0
-        for i in range(len(pr)):
-            if len(pr[i]) == 1:
-                serre_dict[str(i+1)] = pr[i][0]
-            else:
-                serre_dict[str(i+1)] = pr[i]
-
-        val = 1
-        counter = 0
-
-        while counter < 6:
-            print("val ->", val)
-            try:
-                # we try to apply the Serre functor to  <val>  by seeing whether $(val) 
-                # is stored within  <serre_dict>
-                if type(val) == type([]) and (type(val[0]) == type([])):
-                    val = simplify_lst(val)
-                    print("simplified ->", val)
-                val = serre_dict[str(val)]
-
-            except KeyError:
-                print("keyerror ->", val)
-                # if $(val) isn't within  <serre_dict>  , then we must calculate it manually
-                new_arr = []
-                for elem in val:
-                    new_arr.append(serre_dict[str(elem)])
-                serre_dict[str(val)] = new_arr
-                val = new_arr
-
-            counter += 1
-
-
-def simplify_lst(lst):
-    idx = 0
-    while len(lst) != 1:
-        current = lst[0][idx]
-        if current == lst[1] or current in lst[1]:
-            lst[0][idx] = 0
-            if type(lst[1]) == type([]):
-                lst[1].remove(current)
-            else:
-                lst.pop(1)
-        if len(lst[1]) == 1:
-            lst[0].extend(lst[1])
-            lst.pop(1)
-        idx += 1
-    return lst[0]
-
-def simplify2(L):
-    temp = [len(L[i]) + i for i in range(len(L))]
+def calculate_sausages(L):
+    L_copy = copy.deepcopy(L)
+    temp = [len(L_copy[i]) + i for i in range(len(L_copy))]
     length = max(temp)
     N = []
     for i in range(length):
         P = []
         for j in range(i+1):
-            if len(L) > j and L[j] != [] and L[j][0] != [0]:
-                P.append(L[j][0])
-                L[j].pop(0)
+            if len(L_copy) > j and L_copy[j] != [] and L_copy[j][0] != [0]:
+                P.append(L_copy[j][0])
+                L_copy[j].pop(0)
         N.append(P)
     return N
     
