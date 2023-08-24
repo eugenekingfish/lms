@@ -82,6 +82,7 @@ class linear_quiver:
     def serre_resolution_fast(self, max_iter, prnt = False):
         states = [[i+1] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
         proj_res = self.projective_resolution()
+
         for iteration in range(max_iter):
             if prnt:
                 print(iteration, "-->", states)
@@ -89,7 +90,7 @@ class linear_quiver:
             terminate = True
 
             for i in range(self.vertices):
-                states[i] = self.serre_functor(states[i], proj_res) # <--- SLOW
+                states[i] = self.serre_functor(states[i], proj_res) 
                 L = states[i]
                 non_zero = np.count_nonzero(L)
                 
@@ -103,7 +104,7 @@ class linear_quiver:
             if terminate:
                 if prnt:
                     print("FINAL -->", states)
-                return (iteration + 1, self.vertices - non_zero)
+                return (self.vertices - non_zero, iteration + 1)
 
         return "max_iter reached: " + str(max_iter)
 

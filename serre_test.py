@@ -4,8 +4,10 @@ from time import time
 from linear_quivers import *
 from relations import *
 
-n, k = 13,2
-rels = length_k_relations(n, k)
+n, k = 5,3
+
+rels = [[[2,5]]]
+
 
 start = time()
 for rel in rels:
@@ -13,13 +15,17 @@ for rel in rels:
     #pr = lq.projective_resolution()
     #mat = matrix_of_proj_res(pr)
     #print("rel ->", rel, is_fcy(mat, 50), lq.serre_resolution_fast(50, prnt=False))
-    print("rel ->", rel, "output ->", lq.serre_resolution_fast(40, prnt=False))
+    print("rel ->", rel, "output ->", lq.serre_resolution_fast(3, prnt=True))
 end = time()
 
+lst = [[5,3,2],[4]]
+print(remove_lists_and_zeroes([[5],[3,4],[2]]))
+print(calculate_sausages(lst))
 
 
 
-print("\nTotal time ->", end - start, "seconds.")
+
+#print("\nTotal time ->", end - start, "seconds.")
 """
 module = [4,3,2]
 module2 = [0,0,2,1]
