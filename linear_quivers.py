@@ -62,17 +62,14 @@ class linear_quiver:
     """
     def serre_prt_one(self, L):
         pr = self.projective_resolution()
-        print("pr ->", pr)
 
         # STEP 1: We get the projectives for each element of each sublist of L and append to N
         N = []
         for sublist in L:
             P = [] 
             for elem in sublist:
-                print("elem ->", elem, "elem proj ->", pr[elem-1])
                 P.append(pr[elem - 1])
             N.append(P)
-        print("N ->", N, "\n")
 
         # STEP 2
 
@@ -93,21 +90,21 @@ class linear_quiver:
                 else:
                     break
             T.append(U)
-            print(T, i)
-        print("T =>", T, "N =>", N)
         return T
 
 
-    def serre_functor(self, module, proj_res):
+    def serre_functor(self, module):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
-        pr = self.take_projective_resolution(module, proj_res)
         """
+        pr = self.take_projective_resolution(module, proj_res)
         saus = calculate_sausages(pr)
         canc_saus = cancellation(saus)
         """
-        #remove_lists(canc_saus)
-        remove_lists_and_zeroes(canc_saus)
+        canc_saus = self.serre_prt_one(module)
+        #remove_lists_and_zeroes(canc_saus)
+        canc_saus = cancellation(canc_saus)
+        canc_saus = remove_empties(canc_saus)
         return canc_saus
 
     def take_projective_resolution(self, lst, proj_res):
@@ -123,8 +120,8 @@ class linear_quiver:
         Faster, less-readable version of serre_resolution
     """
     def serre_resolution_fast(self, max_iter, prnt = False):
-        states = [[i+1] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
-        proj_res = self.projective_resolution()
+        states = [[[i+1]] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
+        #proj_res = self.projective_resolution()
 
         for iteration in range(max_iter):
             if prnt:
@@ -133,13 +130,18 @@ class linear_quiver:
             terminate = True
 
             for i in range(self.vertices):
-                states[i] = self.serre_functor(states[i], proj_res) 
+                states[i] = self.serre_functor(states[i])
                 L = states[i]
-                non_zero = np.count_nonzero(L)
+                #non_zero = np.count_nonzero(L)
+                non_zero = 0
+                for l in L:
+                    if l != []:
+                        non_zero += 1
+                
                 
                 # If L doesn't contain 1 non-zero element, and its last element isn't i + 1, then 
                 # we know that we shouldn't terminate applying the Serre functor.
-                if not(L[-1] == i + 1 and non_zero == 1):
+                if not(L[-1] == [i + 1] and non_zero == 1):
                     terminate = False
 
             # If terminate is still true after exiting the for loop loop, then we must have reached the final
@@ -202,6 +204,21 @@ def cancellation(L):
             else:
                 j += 1
     return L_cpy
+
+def remove_empties(L):
+    idx = len(L) - 1
+    non_empty_found = False
+
+    while idx >= 0:
+        if L[idx] == []:
+            if non_empty_found:
+                L[idx] = []
+            else:
+                L.pop()
+        else:
+            non_empty_found = True
+        idx -= 1
+    return L
 
 """
     Assumptions:
