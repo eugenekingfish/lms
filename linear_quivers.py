@@ -57,12 +57,55 @@ class linear_quiver:
             output.append(res)
         return output
 
+    """
+        INPUT: 2D list 
+    """
+    def serre_prt_one(self, L):
+        pr = self.projective_resolution()
+        print("pr ->", pr)
+
+        # STEP 1: We get the projectives for each element of each sublist of L and append to N
+        N = []
+        for sublist in L:
+            P = [] 
+            for elem in sublist:
+                print("elem ->", elem, "elem proj ->", pr[elem-1])
+                P.append(pr[elem - 1])
+            N.append(P)
+        print("N ->", N, "\n")
+
+        # STEP 2
+
+        temp = [len(S) + i - 1 for i in range(len(N)) for S in N[i]]
+        length = max(temp)
+
+        T = []
+        N_cpy = copy.deepcopy(N)
+
+        for i in range(length + 1):
+            U = []
+            for j in range(i+1):
+                if j < len(N):
+                    for R in N[j]:
+                        if R != []:
+                            U.append(R[0])
+                            R.pop(0)
+                else:
+                    break
+            T.append(U)
+            print(T, i)
+        print("T =>", T, "N =>", N)
+        return T
+
+
     def serre_functor(self, module, proj_res):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
         pr = self.take_projective_resolution(module, proj_res)
+        """
         saus = calculate_sausages(pr)
         canc_saus = cancellation(saus)
+        """
         #remove_lists(canc_saus)
         remove_lists_and_zeroes(canc_saus)
         return canc_saus
