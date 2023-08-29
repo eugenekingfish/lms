@@ -1,7 +1,13 @@
 # Computational searches for fractional Calabi-Yau algebras
 
+## Introduction
+
 This repository was created whilst working on my 2023 [LMS URB](https://www.lms.ac.uk/grants/undergraduate-research-bursaries) project: 
 Computational searches for fractional Calabi-Yau algebras, supervised by Dr Joseph Grant (UEA).
+
+***
+There are two collections of code (written in Python and GAP) contained in ``py_src`` and ``gap_src`` respectively. 
+Due to speed issues, the GAP code was eventually abandoned in favour of Python. As a result, the focal point of this repository is the Python code. The GAP code will not be documented nor explained, but is included for completeness.
 
 ## Mathematical Motivation
 
