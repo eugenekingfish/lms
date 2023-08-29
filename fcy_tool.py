@@ -1,6 +1,10 @@
+import sys
+
+sys.path.append("py_src/")
+
 from linear_quivers import *
 from relations import *
-from time import time, sleep
+from time import time
 
 step_through_mode = False
 
@@ -23,8 +27,7 @@ start = time()
 
 for rel in rels:
     lq = linear_quiver(n, rel)
-    pr = lq.projective_resolution()
-    print("Relation ->", rel, "\nOutput ->", lq.serre_resolution_fast(max_iter, False))
+    print("Relation ->", rel, "\nOutput ->", lq.serre_resolution(max_iter, False))
     print("\n" + ("-" * 100) + "\n")
     if step_through_mode:
         while True:

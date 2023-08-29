@@ -80,7 +80,8 @@ class linear_quiver:
         return output
 
     # Converts the projective resolution into a matrix
-    def matrix_of_proj_res(self, proj_res):
+    @staticmethod
+    def matrix_of_proj_res(proj_res):
         n = len(proj_res)
         mat = np.zeros((n,n), dtype=int)
         for i in range(n):
@@ -93,9 +94,7 @@ class linear_quiver:
     """
         INPUT: 2D list 
     """
-    def serre_prt_one(self, L):
-        pr = self.projective_resolution()
-
+    def serre_prt_one(self, L, pr):
         # STEP 1: We get the projectives for each element of each sublist of L and append to N
         N = []
         for sublist in L:
@@ -165,22 +164,14 @@ class linear_quiver:
             idx -= 1
         return L
 
-    def serre_functor(self, module):
+    def serre_functor(self, modules):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
-        canc_saus = self.serre_prt_one(module)
+        pr = self.projective_resolution()
+        canc_saus = self.serre_prt_one(modules, pr)
         canc_saus = self.__cancellation(canc_saus)
         canc_saus = self.__remove_empties(canc_saus)
         return canc_saus
-
-
-    def take_projective_resolution(self, lst, proj_res):
-        pr = [[]]
-        pr.extend(proj_res) 
-        lst_cpy = copy.deepcopy(lst)
-        for i in range(len(lst_cpy)):
-            lst_cpy[i] = pr[lst_cpy[i]]
-        return lst_cpy
 
 
     """
@@ -220,22 +211,25 @@ class linear_quiver:
 
         return "max_iter reached: " + str(max_iter)
 
-# Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
-# checking whether the matrix has finite order (up to power <max_pwr>)
-def is_fcy(mat, max_pwr, verbose = False):
-    idty = np.eye(len(mat), dtype = int)
-    res = mat
-    pwr = 1
+    # Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
+    # checking whether the matrix has finite order (up to power <max_pwr>)
+    @staticmethod
+    def is_fcy(mat, max_pwr, verbose = False):
+        idty = np.eye(len(mat), dtype = int)
+        res = mat
+        pwr = 1
 
-    while pwr < max_pwr:
-        res = res @ mat
-        pwr += 1
-        if verbose:
-            print("Power: ", pwr)
-            print(res)
-            print()
+        while pwr < max_pwr:
+            res = res @ mat
+            pwr += 1
+            if verbose:
+                print("Power: ", pwr)
+                print(res)
+                print()
 
-        if np.array_equal(res, idty) or np.array_equal(res, -1 * idty):
-            return (True, pwr)
-    
-    return (False, max_pwr)
+            if np.array_equal(res, idty): 
+                return (True, pwr, "+")
+            if np.array_equal(res, -1 * idty):
+                return (True, pwr, "-")
+        
+        return (False, max_pwr, "N/A")

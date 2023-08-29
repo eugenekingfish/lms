@@ -1,6 +1,7 @@
 from linear_quivers import *
 from relations import *
 
+
 """
     A simple example.
 """
@@ -51,13 +52,13 @@ print(proj_res_mat)
 # We can then use this matrix to test whether the linear quiver that we've created is fractional Calabi-Yau.
 # This is done by checking whether  proj_res_mat  has finite order.
 
-fcy_check = is_fcy(proj_res_mat, 100)
+fcy_check = linear_quiver.is_fcy(proj_res_mat, 100)
 print("FCY Check ->", fcy_check)
 
 # The second parameter to  is_fcy  is the maximum power to which we will raise the matrix.
 # If we set the optional parameter  verbose  to be True, then we can see each matrix power printed.
 
-fcy_check_verbose = is_fcy(proj_res_mat, 100, verbose = True)
+fcy_check_verbose = linear_quiver.is_fcy(proj_res_mat, 100, verbose = True)
 print("FCY Check ->", fcy_check_verbose)
 
 # Finally, to find the Calabi-Yau dimension of the quiver, we can do the following:
