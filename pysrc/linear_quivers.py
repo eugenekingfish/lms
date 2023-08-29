@@ -1,18 +1,29 @@
-from collections import deque
 import numpy as np
-from collections import deque
 import copy
+from linear_module import *
 
 class linear_quiver:
-    # vertices  -- positive integer representing the number of vertices in the quiver 
-    # relations -- list of ordered pairs (a,b) with (b > a), 
-    #              where  a  is the source and  b  is the target of the relation.
     def __init__(self, vertices, relations):
+        """
+        Initialises the quiver with the number of vertices and its relations; also computes the 
+        projective and injective modules.
+
+        Parameters:
+
+            vertices (int): positive integer representing the number of vertices in the quiver.
+            relations (): list of ordered pairs (a,b) with (b > a), where  a  is the source and  b  
+            is the target of the relation.
+        """
         self.vertices = vertices
         self.relations = relations
-        self.calculate_jectives()
+        self.__calculate_jectives()
 
-    def calculate_jectives(self):
+
+    def __calculate_jectives(self):
+        """
+        This private method calculates the injective and projective modules.
+        Sets self.jectives to be a 2D list of the form [ [nth_proj, nth_inj] ] for 1 <= n <= self.vertices.
+        """
         n = self.vertices
         # Generating projectives and injectives for an A_n quiver with no relations
         jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
@@ -26,8 +37,15 @@ class linear_quiver:
 
         self.jectives = jectives
 
+    ###########
+    # Getters
+    ###########
+
     def get_jectives(self):
         return self.jectives
+
+    def get_nth_jective(self, n):
+        return self.jectives[n-1]
 
     def get_nth_projective(self, n):
         return self.jectives[n-1][0]
@@ -35,7 +53,11 @@ class linear_quiver:
     def get_nth_injective(self, n):
         return self.jectives[n-1][1]
 
+    
     def projective_resolution(self):
+        """
+        This function computes the projective resolution.
+        """
         output = [] # this stores the projective resolution
 
         for i in range(self.vertices): # we iterate over the vertices
@@ -56,6 +78,17 @@ class linear_quiver:
 
             output.append(res)
         return output
+
+    # Converts the projective resolution into a matrix
+    def matrix_of_proj_res(self, proj_res):
+        n = len(proj_res)
+        mat = np.zeros((n,n), dtype=int)
+        for i in range(n):
+            mult = 1
+            for elem in proj_res[i]:
+                mat[i][elem - 1] = 1 * mult
+                mult *= -1
+        return mat.T
 
     """
         INPUT: 2D list 
@@ -93,20 +126,53 @@ class linear_quiver:
             T.append(U)
         return T
 
+    """
+        Assumptions:
+            -- L is a list of sub-lists.
+            -- The sub-lists do not contain any lists
+    """
+    def __cancellation(self, L):
+        # Handling degenerate cases
+        l = len(L)
+        if l == 0 or l == 1:
+            return L
+
+        L_cpy = copy.deepcopy(L) 
+
+        # Non-degenereate case
+        for i in range(len(L_cpy) - 1): 
+            j = 0
+            while j < len(L_cpy[i]):
+                if L_cpy[i][j] in L_cpy[i+1]:
+                    L_cpy[i+1].remove(L_cpy[i][j])
+                    L_cpy[i].pop(0)
+                else:
+                    j += 1
+        return L_cpy
+
+    def __remove_empties(self, L):
+        idx = len(L) - 1
+        non_empty_found = False
+
+        while idx >= 0:
+            if L[idx] == []:
+                if non_empty_found:
+                    L[idx] = []
+                else:
+                    L.pop()
+            else:
+                non_empty_found = True
+            idx -= 1
+        return L
 
     def serre_functor(self, module):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
-        """
-        pr = self.take_projective_resolution(module, proj_res)
-        saus = calculate_sausages(pr)
-        canc_saus = cancellation(saus)
-        """
         canc_saus = self.serre_prt_one(module)
-        #remove_lists_and_zeroes(canc_saus)
-        canc_saus = cancellation(canc_saus)
-        canc_saus = remove_empties(canc_saus)
+        canc_saus = self.__cancellation(canc_saus)
+        canc_saus = self.__remove_empties(canc_saus)
         return canc_saus
+
 
     def take_projective_resolution(self, lst, proj_res):
         pr = [[]]
@@ -120,17 +186,11 @@ class linear_quiver:
     """
         Faster, less-readable version of serre_resolution
     """
-    def serre_resolution_fast(self, max_iter, prnt = False):
+    def serre_resolution(self, max_iter, verbose = False):
         states = [[[i+1]] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
 
-        ################################################
-        ################################################
-        #STATE_LIST = []
-        ################################################
-        ################################################
-
         for iteration in range(max_iter):
-            if prnt:
+            if verbose:
                 print(iteration, "-->", states)
 
             terminate = True
@@ -153,187 +213,27 @@ class linear_quiver:
             # If terminate is still true after exiting the for loop loop, then we must have reached the final
             # stage of the Serre functor process. Hence, we can stop and return the dimension.
 
-            ########################################################
-            ########################################################
-            #STATE_LIST.append(copy.deepcopy(states))
-            ########################################################
-            ########################################################
             if terminate:
-                if prnt:
+                if verbose:
                     print("FINAL -->", states)
                 return (self.vertices - non_zero, iteration + 1)
 
-        ##############################################################
-        ##############################################################
-        #return STATE_LIST
-        ##############################################################
-        ##############################################################
         return "max_iter reached: " + str(max_iter)
-
-    def serre_resolution(self, max_iter, prnt = False):
-        init_states = [[i+1] for i in range(self.vertices)]
-        for k in range(max_iter):
-            if prnt:
-                print(k, "-->", init_states)
-
-            terminate = True
-            for i in range(self.vertices):
-                init_states[i] = self.serre_functor(init_states[i])
-                L = init_states[i]
-                non_zero = np.count_nonzero(L)
-                if not(L[-1] == i + 1 and non_zero == 1):
-                    terminate = False
-
-            if terminate:
-                return (k+1, self.vertices - non_zero)
-
-        return "max_iter reached: " + str(max_iter)
-
-def check_zeroes(L):
-    if L != [] and np.count_nonzero(L) == 1 and L[-1] != 0:
-        return True
-    return False
-
-"""
-    Assumptions:
-        -- L is a list of sub-lists.
-        -- The sub-lists do not contain any lists
-"""
-def cancellation(L):
-    # Handling degenerate cases
-    l = len(L)
-    if l == 0 or l == 1:
-        return L
-
-    """
-    Is a deep copy required here? If L is the sausages array, is it necessary to keep it?
-    Modification might not affect the algorithm at all.
-    """
-    L_cpy = copy.deepcopy(L) 
-
-    # Non-degenereate case
-    for i in range(len(L_cpy) - 1): 
-        j = 0
-        while j < len(L_cpy[i]):
-            if L_cpy[i][j] in L_cpy[i+1]:
-                L_cpy[i+1].remove(L_cpy[i][j])
-                L_cpy[i].pop(0)
-            else:
-                j += 1
-    return L_cpy
-
-def remove_empties(L):
-    idx = len(L) - 1
-    non_empty_found = False
-
-    while idx >= 0:
-        if L[idx] == []:
-            if non_empty_found:
-                L[idx] = []
-            else:
-                L.pop()
-        else:
-            non_empty_found = True
-        idx -= 1
-    return L
-
-"""
-    Assumptions:
-        -- L is a list containing sub-lists.
-        -- The sub-lists all have length 1
-"""
-
-def remove_lists_and_zeroes(L):
-    idx = len(L) - 1
-    non_zero_found = False
-
-    while idx >= 0:
-        if L[idx] == []:
-            if non_zero_found:
-                L[idx] = 0
-            else:
-                L.pop()
-        else:
-            non_zero_found = True
-            L[idx] = L[idx][0]
-        idx -= 1
-    return L
-
-
-def remove_lists(L):
-    l = len(L)
-    for i in range(l):
-        if L[i] == []:
-            L[i] = 0
-        else:
-            L[i] = L[i][0]
-    return L
-
-def calculate_sausages(L):
-    L_copy = copy.deepcopy(L)
-    temp = [len(L_copy[i]) + i for i in range(len(L_copy))]
-    length = max(temp)
-    N = []
-    for i in range(length):
-        P = []
-        for j in range(i+1):
-            if len(L_copy) > j and L_copy[j] != [] and L_copy[j][0] != [0]:
-                P.append(L_copy[j][0])
-                L_copy[j].pop(0)
-        N.append(P)
-    return N
-    
-
-# We represent the zero module as head = 0, socle = 0.
-class linear_module:
-    def __init__(self, head, socle):
-        if head < socle:
-            raise("ERROR: Not valid module. socle > head")
-        self.head = head
-        self.socle = socle
-
-    # Checks whether the module is the zero module
-    def is_zero(self):
-        if self.head == 0 and self.socle == 0:
-            return True
-        return False
-
-    # displays the module vertically
-    def display(self):
-        return 0
-    
-    # kernel of two modules
-    @staticmethod
-    def kernel(mod_a, mod_b):
-        a,b = mod_a # we assume that a == b
-        c,d = mod_b
-        if b == d:
-            return [0,0]
-        return [max(b,d) - 1, min(b,d)]
-
-# Converts the projective resolution into a matrix
-def matrix_of_proj_res(proj_res):
-    n = len(proj_res)
-    mat = np.zeros((n,n), dtype=int)
-    for i in range(n):
-        mult = 1
-        for elem in proj_res[i]:
-            mat[i][elem - 1] = 1 * mult
-            mult *= -1
-    return mat.T
-
 
 # Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
 # checking whether the matrix has finite order (up to power <max_pwr>)
-def is_fcy(mat, max_pwr):
+def is_fcy(mat, max_pwr, verbose = False):
     idty = np.eye(len(mat), dtype = int)
     res = mat
     pwr = 1
 
     while pwr < max_pwr:
         res = res @ mat
-        print(pwr, "\n", res)
         pwr += 1
+        if verbose:
+            print("Power: ", pwr)
+            print(res)
+            print()
 
         if np.array_equal(res, idty) or np.array_equal(res, -1 * idty):
             return (True, pwr)
