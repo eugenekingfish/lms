@@ -1,37 +1,44 @@
 import pandas as pd
-from time import time
+from time import time, sleep
 
 from linear_quivers import *
 from relations import *
 
-n, k = 5,3
+#n = int(input("Vertices in quiver >> "))
+#k = int(input("Length of relations >> "))
+#max_iter = int(input("Maximum Serre functor applications >> "))
 
-rels = [[[2,5]]]
+n = 13
+k = 5
+max_iter = 20
 
 
-start = time()
+#rels = length_k_relations(n,k)
+rels = [[[2,7],[4,9]]]
+print(n, "vertices in quiver.")
+print("Computed", k, "length", k, "relations.\n")
+print("----------------------------------\n")
+sleep(0.5)
 for rel in rels:
+
     lq = linear_quiver(n, rel)
-    #pr = lq.projective_resolution()
-    #mat = matrix_of_proj_res(pr)
-    #print("rel ->", rel, is_fcy(mat, 50), lq.serre_resolution_fast(50, prnt=False))
-    print("rel ->", rel, "output ->", lq.serre_resolution_fast(3, prnt=True))
-end = time()
+    pr = lq.projective_resolution()
+    mat = matrix_of_proj_res(pr)
+    temp = mat
+    mat = np.eye(len(mat), dtype = int)
+    for i in range(15):
+        mat = mat @ temp
+        print(mat)
 
-lst = [[5,3,2],[4]]
-print(remove_lists_and_zeroes([[5],[3,4],[2]]))
-print(calculate_sausages(lst))
+    #print("rel ->", rel, "           output ->", lq.serre_resolution_fast(max_iter, True))
+    #print(is_fcy(mat, 20))
 
 
 
 
-#print("\nTotal time ->", end - start, "seconds.")
-"""
-module = [4,3,2]
-module2 = [0,0,2,1]
-print(module, "-$->", lq.serre_functor(module))
-print(module2, "-$->", lq.serre_functor(module2))
-"""
+
+
+
 
 
 

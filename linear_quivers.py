@@ -68,8 +68,9 @@ class linear_quiver:
         for sublist in L:
             P = [] 
             for elem in sublist:
-                P.append(pr[elem - 1])
+                P.append(copy.deepcopy(pr[elem - 1]))
             N.append(P)
+
 
         # STEP 2
 
@@ -121,7 +122,12 @@ class linear_quiver:
     """
     def serre_resolution_fast(self, max_iter, prnt = False):
         states = [[[i+1]] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
-        #proj_res = self.projective_resolution()
+
+        ################################################
+        ################################################
+        #STATE_LIST = []
+        ################################################
+        ################################################
 
         for iteration in range(max_iter):
             if prnt:
@@ -131,8 +137,8 @@ class linear_quiver:
 
             for i in range(self.vertices):
                 states[i] = self.serre_functor(states[i])
+
                 L = states[i]
-                #non_zero = np.count_nonzero(L)
                 non_zero = 0
                 for l in L:
                     if l != []:
@@ -146,11 +152,22 @@ class linear_quiver:
 
             # If terminate is still true after exiting the for loop loop, then we must have reached the final
             # stage of the Serre functor process. Hence, we can stop and return the dimension.
+
+            ########################################################
+            ########################################################
+            #STATE_LIST.append(copy.deepcopy(states))
+            ########################################################
+            ########################################################
             if terminate:
                 if prnt:
                     print("FINAL -->", states)
                 return (self.vertices - non_zero, iteration + 1)
 
+        ##############################################################
+        ##############################################################
+        #return STATE_LIST
+        ##############################################################
+        ##############################################################
         return "max_iter reached: " + str(max_iter)
 
     def serre_resolution(self, max_iter, prnt = False):
@@ -315,6 +332,7 @@ def is_fcy(mat, max_pwr):
 
     while pwr < max_pwr:
         res = res @ mat
+        print(pwr, "\n", res)
         pwr += 1
 
         if np.array_equal(res, idty) or np.array_equal(res, -1 * idty):

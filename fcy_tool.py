@@ -2,7 +2,7 @@ from linear_quivers import *
 from relations import *
 from time import time, sleep
 
-step_through_mode = True
+step_through_mode = False
 
 n = int(input("Enter number of vertices in quiver: "))
 k = int(input("Enter length of relations: "))
@@ -24,7 +24,7 @@ start = time()
 for rel in rels:
     lq = linear_quiver(n, rel)
     pr = lq.projective_resolution()
-    print("Relation ->", rel, "\nOutput ->", lq.serre_resolution_fast(max_iter, True))
+    print("Relation ->", rel, "\nOutput ->", lq.serre_resolution_fast(max_iter, False))
     print("\n" + ("-" * 100) + "\n")
     if step_through_mode:
         while True:
