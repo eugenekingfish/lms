@@ -15,3 +15,10 @@ This repository includes code that allows for testing whether $kQ_n/I$ is fracti
 It also has the ability to compute the fCY dimension by repeatedly applying the Serre functor to the projective modules.
 
 ## Getting Started
+
+Within the ``py_src`` directory, you'll find the file ``tutorial.py``. This file explains how to make use of the code contained in ``linear_quiver.py``, ``linear_module.py``, and ``relations.py``.
+This would be a sensible starting point.
+
+***
+
+In addition to this, the file ``fcy_tool.py`` can be run to immediately start computing the fCY dimension of $Q_n$ subject to length $k$ relations.
