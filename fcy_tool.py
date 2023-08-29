@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("pysrc/")
+sys.path.append("py_src/")
 
 from linear_quivers import *
 from relations import *
