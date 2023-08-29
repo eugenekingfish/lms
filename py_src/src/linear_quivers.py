@@ -93,9 +93,7 @@ class linear_quiver:
     """
         INPUT: 2D list 
     """
-    def serre_prt_one(self, L):
-        pr = self.projective_resolution()
-
+    def serre_prt_one(self, L, pr):
         # STEP 1: We get the projectives for each element of each sublist of L and append to N
         N = []
         for sublist in L:
@@ -168,7 +166,8 @@ class linear_quiver:
     def serre_functor(self, module):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
-        canc_saus = self.serre_prt_one(module)
+        pr = self.projective_resolution()
+        canc_saus = self.serre_prt_one(module, pr)
         canc_saus = self.__cancellation(canc_saus)
         canc_saus = self.__remove_empties(canc_saus)
         return canc_saus

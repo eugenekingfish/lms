@@ -1,5 +1,8 @@
+import sys
 from linear_quivers import *
 from relations import *
+sys.path.append("../src")
+
 
 """
     A simple example.
