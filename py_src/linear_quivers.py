@@ -92,7 +92,7 @@ class linear_quiver:
         return mat.T
 
     """
-        INPUT: 2D list 
+        This function requires L (a 2D list of modules) and the projective resolution pr.
     """
     def serre_prt_one(self, L, pr):
         # STEP 1: We get the projectives for each element of each sublist of L and append to N
@@ -104,7 +104,7 @@ class linear_quiver:
             N.append(P)
 
 
-        # STEP 2
+        # STEP 2: Apply the sausages procedure
 
         temp = [len(S) + i - 1 for i in range(len(N)) for S in N[i]]
         length = max(temp)
