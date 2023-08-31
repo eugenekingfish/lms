@@ -26,14 +26,15 @@ class linear_quiver:
         """
         n = self.vertices
         # Generating projectives and injectives for an A_n quiver with no relations
-        jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
+        #jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
+        jectives = [[[i+1,1],[n,i+1]] for i in range(n)]
 
         for r in self.relations:
             a, b = r
             for v in range(b, n+1):
                 jectives[v-1][0][1] = max(a + 1, jectives[v-1][0][1]) 
             for v in range(a, 0, -1):
-                jectives[v-1][1][1] = min(b - 1, jectives[v-1][1][1])
+                jectives[v-1][1][0] = min(b - 1, jectives[v-1][1][0])
 
         self.jectives = jectives
 
@@ -64,17 +65,16 @@ class linear_quiver:
             res = [] 
             resolved = False 
             inj = self.jectives[i][1] # ith injective
-            rev_inj = [inj[1], inj[0]] # reversed ith injective
 
             while not resolved:
-                res.append(rev_inj[0]) 
-                proj = self.jectives[rev_inj[0]-1][0] # projective corresponding to ith injective
-                ker = linear_module.kernel(rev_inj, proj)
+                res.append(inj[0]) 
+                proj = self.jectives[inj[0]-1][0] # projective corresponding to ith injective
+                ker = linear_module.kernel(inj, proj)
 
                 if ker == [0,0]:
                     resolved = True
 
-                rev_inj = ker
+                inj = ker
 
             output.append(res)
         return output
