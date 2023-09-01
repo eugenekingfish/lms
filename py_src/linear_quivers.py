@@ -26,14 +26,15 @@ class linear_quiver:
         """
         n = self.vertices
         # Generating projectives and injectives for an A_n quiver with no relations
-        jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
+        #jectives = [[[i+1,1],[i+1,n]] for i in range(n)]
+        jectives = [[[i+1,1],[n,i+1]] for i in range(n)]
 
         for r in self.relations:
             a, b = r
             for v in range(b, n+1):
                 jectives[v-1][0][1] = max(a + 1, jectives[v-1][0][1]) 
             for v in range(a, 0, -1):
-                jectives[v-1][1][1] = min(b - 1, jectives[v-1][1][1])
+                jectives[v-1][1][0] = min(b - 1, jectives[v-1][1][0])
 
         self.jectives = jectives
 
@@ -53,30 +54,35 @@ class linear_quiver:
     def get_nth_injective(self, n):
         return self.jectives[n-1][1]
 
-    
-    def projective_resolution(self):
+    def projective_resolution_of_module(self, module):
+
+        res = [] 
+        resolved = False 
+
+        while not resolved:
+            res.append(module[0]) 
+            proj = self.jectives[module[0]-1][0] # projective corresponding to ith moduleective
+            ker = linear_module.kernel(module, proj)
+
+            if ker == [0,0]:
+                resolved = True
+
+            module = ker
+
+        return res
+
+
+    def projective_resolution_of_injectives(self):
         """
         This function computes the projective resolution.
         """
         output = [] # this stores the projective resolution
 
         for i in range(self.vertices): # we iterate over the vertices
-            res = [] 
-            resolved = False 
             inj = self.jectives[i][1] # ith injective
-            rev_inj = [inj[1], inj[0]] # reversed ith injective
-
-            while not resolved:
-                res.append(rev_inj[0]) 
-                proj = self.jectives[rev_inj[0]-1][0] # projective corresponding to ith injective
-                ker = linear_module.kernel(rev_inj, proj)
-
-                if ker == [0,0]:
-                    resolved = True
-
-                rev_inj = ker
-
+            res = self.projective_resolution_of_module(inj)
             output.append(res)
+
         return output
 
     # Converts the projective resolution into a matrix
@@ -92,9 +98,9 @@ class linear_quiver:
         return mat.T
 
     """
-        INPUT: 2D list 
+        This function requires L (a 2D list of modules) and the projective resolution pr.
     """
-    def serre_prt_one(self, L, pr):
+    def __serre_prt_one(self, L, pr):
         # STEP 1: We get the projectives for each element of each sublist of L and append to N
         N = []
         for sublist in L:
@@ -104,7 +110,7 @@ class linear_quiver:
             N.append(P)
 
 
-        # STEP 2
+        # STEP 2: Apply the sausages procedure
 
         temp = [len(S) + i - 1 for i in range(len(N)) for S in N[i]]
         length = max(temp)
@@ -167,17 +173,14 @@ class linear_quiver:
     def serre_functor(self, modules):
         # Repeated calls to self.take_projective_resolution will call self.projective_resolution 
         # every single time. This is probably bad for larger quivers.
-        pr = self.projective_resolution()
-        canc_saus = self.serre_prt_one(modules, pr)
+        pr = self.projective_resolution_of_injectives()
+        canc_saus = self.__serre_prt_one(modules, pr)
         canc_saus = self.__cancellation(canc_saus)
         canc_saus = self.__remove_empties(canc_saus)
         return canc_saus
 
 
-    """
-        Faster, less-readable version of serre_resolution
-    """
-    def serre_resolution(self, max_iter, verbose = False):
+    def fcy_dim(self, max_iter, verbose = False):
         states = [[[i+1]] for i in range(self.vertices)] # Initialising the states to be the projectives [1], [2], ..., [n]
 
         for iteration in range(max_iter):
@@ -214,7 +217,7 @@ class linear_quiver:
     # Checks whether the quiver represented by the matrix <mat> is fractional Calabi-Yau by 
     # checking whether the matrix has finite order (up to power <max_pwr>)
     @staticmethod
-    def is_fcy(mat, max_pwr, verbose = False):
+    def is_fcy_gg(mat, max_pwr, verbose = False):
         idty = np.eye(len(mat), dtype = int)
         res = mat
         pwr = 1
