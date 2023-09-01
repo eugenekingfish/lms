@@ -18,8 +18,10 @@ This involves forming the quotient algebra $kQ_n / I$, where $I$ is the ideal ge
 ***
 
 It is known that, if $I = ()$, then $kQ_n/I$ is fractional Calabi-Yau (fCY) for any $n$. However, less is known when $I$ is non-zero.
-This repository's major motivation was to produce code that allows for testing whether $kQ_n/I$ is fCY. This is implemented in two different ways: by testing whether the matrix obtained from the projective resolution has finite order,
-and by repeatedly applying the Serre functor until resolution is resolved, obtaining the fCY dimension of the path algebra.
+This repository's major motivation was to produce code that allows for testing whether $kQ_n/I$ is fCY. <br>
+
+This is implemented in two different ways: by testing whether the matrix obtained from the projective resolution of the injectives has finite order,
+and by repeatedly applying the Serre functor until it is isomorphism to a shift, hence obtaining the Calabi-Yau dimension of the algebra.
 
 ## Dependencies
 This code has been written and tested for Python 3.10.12, though probably works on other versions. <br> 
